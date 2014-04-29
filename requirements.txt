@@ -1,0 +1,5 @@
+Django==1.6.4
+django-json-field==0.5.5
+python-dateutil==2.2
+six==1.6.1
+wsgiref==0.1.2
