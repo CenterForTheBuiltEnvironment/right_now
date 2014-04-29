@@ -22,6 +22,7 @@ class Question(models.Model):
     text = models.TextField()
     qtype = models.CharField(max_length=1, choices=QUESTION_TYPES) 
     choices = JSONField()
+    value_map = JSONField()
     module = models.ForeignKey('Module')
 
     def __unicode__(self):

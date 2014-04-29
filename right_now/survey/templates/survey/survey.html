@@ -1,1 +1,28 @@
 <h1>{{ survey.name }}</h1>
+
+{% for m in modules %}
+  {{ m.name }}
+  {% for q in m.questions %}
+    {{ q.text }}
+    {% if q.qtype == "C" %}
+      {{ q.choices }}
+      {{ q.value_map }}
+      continuous
+    {% elif q.qtype == "D" %}
+      {{ q.choices }}
+      {{ q.value_map }}
+      discrete
+    {% elif q.qtype == "A" %}
+      {{ q.choices }}
+      {{ q.value_map }}
+      acceptability
+    {% elif q.qtype == "T" %}
+      {{ q.choices }}
+      {{ q.value_map }}
+      text
+    {% endif %}
+    <br> 
+  {% endfor %}
+  <hr>
+{% endfor %}
+
