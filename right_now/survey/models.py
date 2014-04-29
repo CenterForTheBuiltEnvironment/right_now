@@ -1,3 +1,5 @@
+import string
+import random
 from django.db import models
 from json_field import JSONField
 
@@ -26,17 +28,22 @@ class Question(models.Model):
         return self.name
 
 class Data(models.Model):
-    date_time = models.DateTimeField('Datetime of response')
+    datetime = models.DateTimeField('Datetime of response')
     survey = models.ForeignKey('Survey')
     question = models.ForeignKey('Question')
     subject_id = models.CharField(max_length=50)
     value = models.TextField()
 
 class Survey(models.Model):
+    
+    def get_survey_url():
+        return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
+
     date_created = models.DateTimeField('Date created')
     name = models.CharField(max_length=80)
     contact = models.EmailField()
     modules = models.ManyToManyField(Module)
+    url = models.CharField(max_length=5, default=get_survey_url())
 
     def __unicode__(self):
         return self.name
