@@ -1,3 +1,5 @@
+{% extends "survey/layout.html" %}
+{% block content %}
 {% if latest_survey_list %}
     <ul>
     {% for survey in latest_survey_list %}
@@ -7,3 +9,4 @@
 {% else %}
     <p>No surveys are available.</p>
 {% endif %}
+{% endblock %}
