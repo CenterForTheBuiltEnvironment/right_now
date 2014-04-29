@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 
 from django.http import HttpResponse
 from django.template import RequestContext, loader
+from django.views.decorators.http import require_POST
 
 from survey.models import Survey, Question
 
@@ -21,3 +22,14 @@ def survey(request, survey_url):
         modules.append({'name': m.name, 'questions': questions})
     ctx = {'survey': survey, 'modules': modules}
     return render(request, 'survey/survey.html', ctx)
+
+@require_POST
+def submit(request, survey_url):
+    print request.content, survey_url
+    return HttpResponseRedirect('/survey/thanks/')
+
+def thanks(request):
+    return render(request, 'survey/thanks.html', {'survey': survey})
+
+def report(request, survey_url):
+    return render(request, 'survey/report.html')
