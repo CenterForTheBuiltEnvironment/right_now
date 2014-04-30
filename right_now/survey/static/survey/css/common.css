@@ -1,0 +1,17 @@
+.question-text {
+  font-size: 1.2em;
+}
+
+.slider {
+  width: 350px;
+}
+
+.slider-container {
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  border: 1px solid;
+  border-color: rgb(240,240,240);
+  border-radius: 5px;
+  box-shadow: 1px 1px 1px rgba(0,0,0,.2); 
+}
