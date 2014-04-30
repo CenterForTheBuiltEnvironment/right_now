@@ -10,6 +10,7 @@
       {{ q.choices }}
       {{ q.value_map }}
       continuous
+      <input type="text" id="foo" class="slider" data-slider-min="{{ q.value_map.0 }}" data-slider-max="{{ q.value_map.1 }}"> 
     {% elif q.qtype == "D" %}
       {{ q.choices }}
       {{ q.value_map }}
@@ -27,4 +28,13 @@
   {% endfor %}
   <hr>
 {% endfor %}
+
+<script>
+  $('.slider').slider({
+    'tooltip': 'hide',
+    'selection': 'none',
+    'step': 0.01, 
+  });
+</script>
+
 {% endblock %}
