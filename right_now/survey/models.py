@@ -6,8 +6,7 @@ from json_field import JSONField
 QUESTION_TYPES = (
     ('C', 'Continuous'),
     ('D', 'Discrete'),
-    ('A', 'Acceptability Scale'),
-    ('T', 'Text Response'),
+    ('T', 'Text'),
 )
 
 class Module(models.Model):
