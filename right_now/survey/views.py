@@ -25,12 +25,12 @@ def survey(request, survey_url):
     questions_json = []
     for m in modules:
         for q in m['questions']:
-            keys= ['id', 'text', 'name', 'choices', 'value_map']
+            keys= ['id', 'text', 'name', 'choices', 'value_map', 'qtype']
             obj = {k: getattr(q, k) for k in keys}
             questions_json.append(obj)
 
     questions_json = json.dumps(questions_json)
-    ctx = {'survey': survey, 'modules': modules, 'json': questions_json }
+    ctx = { 'survey': survey, 'modules': modules, 'json': questions_json }
     return render(request, 'survey/survey.html', ctx)
 
 

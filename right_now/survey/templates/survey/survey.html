@@ -7,14 +7,14 @@
   <li><p class="question-text">{{ q.text }}</p></li>
     {% if q.qtype == "C" %}
     <div class='slider-container'>
-      <input type="text" id="{{ q.name }}" class="slider" data-slider-min="{{ q.value_map.0 }}" data-slider-max="{{ q.value_map.1 }}"> 
+      <input type="text" id="question-{{ q.id }}" class="slider" data-slider-min="{{ q.value_map.0 }}" data-slider-max="{{ q.value_map.1 }}"> 
     </div>
     {% elif q.qtype == "D" %}
 
-    <div class='discrete' id="{{ q.name }}">
+    <div class='discrete' id="question-{{ q.id }}">
       <div class='btn-group' data-toggle="buttons">  
         {% for c in q.choices %}
-        <label class='btn btn-primary'><input type='radio' data-choice-index='{{ forloop.counter0 }}' id='{{ q.name }}-{{ forloop.counter0 }}' name='radio'>{{ c }}</label>
+        <label class='btn btn-default'><input type='radio' data-choice-index={{ forloop.counter0 }} id='{{ q.name }}-{{ forloop.counter0 }}' name='radio'>{{ c }}</label>
         {% endfor %}
       </div>
     </div>
@@ -25,15 +25,18 @@
     {% endfor %}
   </li>
 {% endfor %}
-</ol>
 
-<div id='submit-container'>
-  <label class='btn btn-primary'>Submit button</label> 
-</div>
+  <div id='submit-container' style="margin: 0 auto; width: 50%; padding: 20px; text-align: center;">
+    <button id='submit' class='btn btn-success btn-lg'>Submit</button> 
+  </div>
+
+</ol>
 
 <script>
   
   var questions = eval("{{ json|escapejs }}");
+  var survey = {{ survey.id }}
+  var subject_id = '444'; // placeholder
 
   $('.slider').slider({
     'tooltip': 'hide',
@@ -42,6 +45,28 @@
     'value': 0,
   });
 
+  $('#submit').click(renderResult);
+
+  function renderResult(){
+    var N = questions.length;
+    var payload = [];
+    for (var i = 0; i < N; i++){
+      var q = questions[i];
+      var q_dom = $('#question-' + q.id);
+      var payload = { 'survey': survey, 'question': q.id, 'subject_id': subject_id };
+      if (q.qtype=="D"){
+        var choice_index = q_dom.children().children('.active').children().attr('data-choice-index');
+        var mapped = q.value_map[choice_index];
+        var v = mapped;
+      } else if (q.qtype=="C"){
+        var v = q_dom.data('slider').getValue()
+      }
+      if (typeof v != 'undefined'){
+        payload.value = v;
+        console.log(payload);
+      }
+    }
+  }
 </script>
 
 {% endblock %}
