@@ -45,10 +45,8 @@ def survey(request, survey_url):
 def session(request, survey_url):
     c = {}
     c.update(csrf(request))
-    qd = request.POST
-    request.session['workstation'] = qd['workstation']
+    request.session['workstation'] = request.POST['workstation']
     return HttpResponse(200)
-    #return render_to_response('survey/survey.html', c)
 
 @require_POST
 def submit(request, survey_url):
