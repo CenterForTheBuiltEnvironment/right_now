@@ -1,6 +1,7 @@
 import json
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, render_to_response, get_object_or_404
+from django.core.context_processors import csrf
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.views.decorators.http import require_POST
@@ -16,7 +17,11 @@ def index(request):
     return HttpResponse(template.render(context))
 
 def welcome(request, survey_url):
-    return render(request, 'survey/welcome.html')
+    try:
+        workstation = request.session['workstation']
+        return render(request, 'survey/welcome.html', {'workstation': workstation, 'survey_url': survey_url})
+    except KeyError:
+        return render(request, 'survey/welcome.html', {'workstation': None, 'survey_url': survey_url })
 
 def survey(request, survey_url):
     survey = get_object_or_404(Survey, url=survey_url) 
@@ -36,6 +41,14 @@ def survey(request, survey_url):
     ctx = { 'survey': survey, 'modules': modules, 'json': questions_json }
     return render(request, 'survey/survey.html', ctx)
 
+@require_POST
+def session(request, survey_url):
+    c = {}
+    c.update(csrf(request))
+    qd = request.POST
+    request.session['workstation'] = qd['workstation']
+    return HttpResponse(200)
+    #return render_to_response('survey/survey.html', c)
 
 @require_POST
 def submit(request, survey_url):
