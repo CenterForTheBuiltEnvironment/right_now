@@ -53,7 +53,7 @@
     for (var i = 0; i < N; i++){
       var q = questions[i];
       var q_dom = $('#question-' + q.id);
-      var payload = { 'survey': survey, 'question': q.id, 'subject_id': subject_id };
+      var response = { 'survey': survey, 'question': q.id, 'subject_id': subject_id };
       if (q.qtype=="D"){
         var choice_index = q_dom.children().children('.active').children().attr('data-choice-index');
         var mapped = q.value_map[choice_index];
@@ -62,10 +62,11 @@
         var v = q_dom.data('slider').getValue()
       }
       if (typeof v != 'undefined'){
-        payload.value = v;
-        console.log(payload);
+        response.value = v;
+        payload.push(response);
       }
     }
+    console.log(payload);
   }
 </script>
 

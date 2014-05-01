@@ -15,6 +15,9 @@ def index(request):
     })
     return HttpResponse(template.render(context))
 
+def welcome(request, survey_url):
+    return render(request, 'survey/welcome.html')
+
 def survey(request, survey_url):
     survey = get_object_or_404(Survey, url=survey_url) 
     modules = []
@@ -38,9 +41,6 @@ def survey(request, survey_url):
 def submit(request, survey_url):
     print request.content, survey_url
     return HttpResponseRedirect('/survey/thanks/')
-
-def welcome(request, survey_url):
-    pass
 
 def thanks(request):
     return render(request, 'survey/thanks.html', {'survey': survey})
