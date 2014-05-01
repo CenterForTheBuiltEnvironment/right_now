@@ -35,8 +35,8 @@
 <script>
   
   var questions = eval("{{ json|escapejs }}");
-  var survey = {{ survey.id }}
-  var subject_id = '444'; // placeholder
+  var survey_url = "{{ survey.url }}";
+  var survey = {{ survey.id }};
 
   $('.slider').slider({
     'tooltip': 'hide',
@@ -53,7 +53,7 @@
     for (var i = 0; i < N; i++){
       var q = questions[i];
       var q_dom = $('#question-' + q.id);
-      var response = { 'survey': survey, 'question': q.id, 'subject_id': subject_id };
+      var response = { 'survey': survey, 'question': q.id};
       if (q.qtype=="D"){
         var choice_index = q_dom.children().children('.active').children().attr('data-choice-index');
         var mapped = q.value_map[choice_index];
@@ -65,9 +65,12 @@
         response.value = v;
         payload.push(response);
       }
-    }
-    console.log(payload);
+    } $.ajax({
+      url: "/survey/" + survey_url + "/submit/",
+      type: "POST",
+      data: JSON.stringify(payload, null, 2),
+      success: function(){ window.location.href = "/survey/" + survey_url + "/thanks/"; },
+    });
   }
 </script>
-
 {% endblock %}

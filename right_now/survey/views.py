@@ -24,6 +24,8 @@ def welcome(request, survey_url):
         return render(request, 'survey/welcome.html', {'workstation': None, 'survey_url': survey_url })
 
 def survey(request, survey_url):
+    if request.session['workstation'] is None:
+        return HttpResponseRedirect('/survey/' + survey_url)
     survey = get_object_or_404(Survey, url=survey_url) 
     modules = []
     for m in survey.modules.all():
@@ -50,10 +52,14 @@ def session(request, survey_url):
 
 @require_POST
 def submit(request, survey_url):
-    print request.content, survey_url
-    return HttpResponseRedirect('/survey/thanks/')
+    c = {}
+    c.update(csrf(request))
+    workstation = request.session['workstation']
+    d = json.loads(request.body)
+    print d
+    return HttpResponse(200)
 
-def thanks(request):
+def thanks(request, survey_url):
     return render(request, 'survey/thanks.html', {'survey': survey})
 
 def report(request, survey_url):
