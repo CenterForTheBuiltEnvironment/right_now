@@ -1,5 +1,7 @@
 .question-text {
-  font-size: 1.2em;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 1.3em;
 }
 
 .slider {
@@ -10,8 +12,18 @@
   padding: 20px;
   text-align: center;
   margin-bottom: 20px;
+  margin-top: 20px;
   border: 1px solid;
   border-color: rgb(240,240,240);
   border-radius: 5px;
   box-shadow: 1px 1px 1px rgba(0,0,0,.2); 
+}
+
+.discrete {
+  padding: 10px;
+  text-align: center;
+  width: 80%;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  clear: both;
 }

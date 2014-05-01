@@ -7,24 +7,41 @@
   <li><p class="question-text">{{ q.text }}</p></li>
     {% if q.qtype == "C" %}
     <div class='slider-container'>
-      <input type="text" id="foo" class="slider" data-slider-min="{{ q.value_map.0 }}" data-slider-max="{{ q.value_map.1 }}"> 
+      <input type="text" id="{{ q.name }}" class="slider" data-slider-min="{{ q.value_map.0 }}" data-slider-max="{{ q.value_map.1 }}"> 
     </div>
     {% elif q.qtype == "D" %}
-      discrete
+
+    <div class='discrete' id="{{ q.name }}">
+      <div class='btn-group' data-toggle="buttons">  
+        {% for c in q.choices %}
+        <label class='btn btn-primary'><input type='radio' data-choice-index='{{ forloop.counter0 }}' id='{{ q.name }}-{{ forloop.counter0 }}' name='radio'>{{ c }}</label>
+        {% endfor %}
+      </div>
+    </div>
+
     {% elif q.qtype == "T" %}
       text
     {% endif %}
     {% endfor %}
-    </li>
-  <hr>
+  </li>
 {% endfor %}
+</ol>
+
+<div id='submit-container'>
+  <label class='btn btn-primary'>Submit button</label> 
+</div>
 
 <script>
+  
+  var questions = eval("{{ json|escapejs }}");
+
   $('.slider').slider({
     'tooltip': 'hide',
     'selection': 'none',
     'step': 0.01, 
+    'value': 0,
   });
+
 </script>
 
 {% endblock %}
