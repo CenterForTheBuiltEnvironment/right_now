@@ -81,25 +81,28 @@
       for (var i = 0; i < N; i++){
         var q = questions[i];
         if (q.qtype=="C"){
+          var M = q.choices.length;
           var container = $('#question-' + q.id + '-container');
           var ticks_container = $("<div class='ticks-container' id='ticks-" + q.id + "-container'></div>").appendTo(container);
           var labels_container = $("<div class='labels-container' id='labels-" + q.id + "-container'></div>").appendTo(container);
-          var tick_margin = L / (q.choices.length - 1) - tick_width;
+          var tick_margin = L / (M - 1) - tick_width;
           var remainder = L - (parseInt(tick_margin) + tick_width) * (q.choices.length - 1);
-
+          var label_width = 58;
+          var label_margin = (408 - 58 * M) / (M - 1);
+          // ticks
           $('<div class="tick"></div>').appendTo(ticks_container);
-          for (var j = 1; j < q.choices.length - 1; j++){
+          for (var j = 1; j < M - 1; j++){
             $('<div class="tick"></div>').appendTo(ticks_container).css('margin-left', tick_margin);
           }
           $('<div class="tick"></div>').appendTo(ticks_container).css('margin-left', tick_margin - 1 + remainder);
  
-          $('<div class="label">' + q.choices[0] + '</div>').appendTo(labels_container);
-          for (var j = 1; j < q.choices.length - 1; j++){
-            $('<div class="label">' + q.choices[j] + '</div>').appendTo(labels_container).css('margin-left', tick_margin);
+          // labels
+          //$('<br style="clear: both">').appendTo(labels_container);
+          for (var j = 0; j < M - 1; j++){
+            $('<div class="mylabel"><p class="p-label">' + q.choices[j] + '</p></div>').appendTo(labels_container).css('margin-right', label_margin);
           }
-          $('<div class="label">' + q.choices[q.choices.length - 1] + '</div>')
-            .appendTo(labels_container)
-            .css('margin-left', tick_margin - 1 + remainder);
+          $('<div class="mylabel"><p class="p-label">' + q.choices[j] + '</p></div>').appendTo(labels_container);
+          $('.label').css('width', label_width);
         }
       }
     }
