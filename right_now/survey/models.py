@@ -34,6 +34,13 @@ class Data(models.Model):
     subject_id = models.CharField(max_length=50)
     value = models.DecimalField(max_digits=9, decimal_places=2)
 
+class Comment(models.Model):
+    datetime = models.DateTimeField('Datetime of response')
+    survey = models.ForeignKey('Survey')
+    question = models.ForeignKey('Question')
+    subject_id = models.CharField(max_length=50)
+    comment = models.TextField()
+
 class Survey(models.Model):
     
     def get_survey_url():

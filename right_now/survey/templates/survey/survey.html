@@ -14,13 +14,17 @@
     <div class='discrete' id="question-{{ q.id }}">
       <div class='btn-group' data-toggle="buttons">  
         {% for c in q.choices %}
-        <label class='btn btn-default'><input type='radio' data-choice-index={{ forloop.counter0 }} id='{{ q.name }}-{{ forloop.counter0 }}' name='radio'>{{ c }}</label>
+        <label class='btn btn-default'>
+          <input type='radio' data-choice-index={{ forloop.counter0 }} id='{{ q.name }}-{{ forloop.counter0 }}' name='radio'>{{ c }}
+        </label>
         {% endfor %}
       </div>
     </div>
 
     {% elif q.qtype == "T" %}
-      text
+    <div class='text-input-container'>
+      <textarea id="question-{{ q.id }}"class="form-control" rows="3"></textarea>
+    </div>
     {% endif %}
     {% endfor %}
   </li>
@@ -54,16 +58,23 @@
       for (var i = 0; i < N; i++){
         var q = questions[i];
         var q_dom = $('#question-' + q.id);
-        var response = { 'survey': survey, 'question': q.id};
+        var response = { 'survey': survey, 'question': q.id };
         if (q.qtype=="D"){
           var choice_index = q_dom.children().children('.active').children().attr('data-choice-index');
           var mapped = q.value_map[choice_index];
           var v = mapped;
         } else if (q.qtype=="C"){
           var v = q_dom.data('slider').getValue()
+        } else if (q.qtype=="T"){
+          var c = q_dom.val();
+          if (c != ""){
+            response.comment = c;
+          }
         }
         if (typeof v != 'undefined'){
           response.value = v;
+          payload.push(response);
+        } else if (typeof c != 'undefined'){
           payload.push(response);
         }
       } $.ajax({
@@ -97,7 +108,6 @@
           $('<div class="tick"></div>').appendTo(ticks_container).css('margin-left', tick_margin - 1 + remainder);
  
           // labels
-          //$('<br style="clear: both">').appendTo(labels_container);
           for (var j = 0; j < M - 1; j++){
             $('<div class="mylabel"><p class="p-label">' + q.choices[j] + '</p></div>').appendTo(labels_container).css('margin-right', label_margin);
           }

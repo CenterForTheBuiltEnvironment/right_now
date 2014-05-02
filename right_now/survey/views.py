@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.views.decorators.http import require_POST
 
-from survey.models import Survey, Question, Data
+from survey.models import Survey, Question, Data, Comment
 
 def index(request):
     latest_survey_list = Survey.objects.order_by('-date_created')[:5]
@@ -63,11 +63,13 @@ def submit(request, survey_url):
     for r in d:
         q = Question.objects.get(id=r['question'])
         s = Survey.objects.get(id=r['survey'])
-        try: 
+        print r
+        if 'value' in r:
             data = Data(datetime=now, survey=s, question=q, subject_id=workstation, value=Decimal(r['value']))
             data.save()
-        except Exception, e:
-            print e
+        elif 'comment' in r:
+            comment = Comment(datetime=now, survey=s, question=q, subject_id=workstation, comment=r['comment'])
+            comment.save()
     return HttpResponse(200)
 
 def thanks(request, survey_url):
