@@ -63,7 +63,6 @@ def submit(request, survey_url):
     for r in d:
         q = Question.objects.get(id=r['question'])
         s = Survey.objects.get(id=r['survey'])
-        print r
         if 'value' in r:
             data = Data(datetime=now, survey=s, question=q, subject_id=workstation, value=Decimal(r['value']))
             data.save()
