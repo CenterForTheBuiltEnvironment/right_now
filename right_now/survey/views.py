@@ -1,4 +1,7 @@
 import json
+import datetime
+import pytz
+from decimal import *
 
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.core.context_processors import csrf
@@ -6,7 +9,7 @@ from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.views.decorators.http import require_POST
 
-from survey.models import Survey, Question
+from survey.models import Survey, Question, Data
 
 def index(request):
     latest_survey_list = Survey.objects.order_by('-date_created')[:5]
@@ -47,7 +50,7 @@ def survey(request, survey_url):
 def session(request, survey_url):
     c = {}
     c.update(csrf(request))
-    request.session['workstation'] = request.POST['workstation']
+    request.session['workstation'] = str(request.POST['workstation'])
     return HttpResponse(200)
 
 @require_POST
@@ -56,7 +59,15 @@ def submit(request, survey_url):
     c.update(csrf(request))
     workstation = request.session['workstation']
     d = json.loads(request.body)
-    print d
+    now = datetime.datetime.now(pytz.timezone('US/Pacific'))
+    for r in d:
+        q = Question.objects.get(id=r['question'])
+        s = Survey.objects.get(id=r['survey'])
+        try: 
+            data = Data(datetime=now, survey=s, question=q, subject_id=workstation, value=Decimal(r['value']))
+            data.save()
+        except Exception, e:
+            print e
     return HttpResponse(200)
 
 def thanks(request, survey_url):

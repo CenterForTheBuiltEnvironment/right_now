@@ -32,7 +32,7 @@ class Data(models.Model):
     survey = models.ForeignKey('Survey')
     question = models.ForeignKey('Question')
     subject_id = models.CharField(max_length=50)
-    value = models.TextField()
+    value = models.DecimalField(max_digits=9, decimal_places=2)
 
 class Survey(models.Model):
     

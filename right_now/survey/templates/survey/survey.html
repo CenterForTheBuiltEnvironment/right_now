@@ -6,7 +6,7 @@
   {% for q in m.questions %}
   <li><p class="question-text">{{ q.text }}</p></li>
     {% if q.qtype == "C" %}
-    <div class='slider-container'>
+    <div class='slider-container' id="question-{{ q.id }}-container">
       <input type="text" id="question-{{ q.id }}" class="slider" data-slider-min="{{ q.value_map.0 }}" data-slider-max="{{ q.value_map.1 }}"> 
     </div>
     {% elif q.qtype == "D" %}
@@ -34,43 +34,78 @@
 
 <script>
   
-  var questions = eval("{{ json|escapejs }}");
-  var survey_url = "{{ survey.url }}";
-  var survey = {{ survey.id }};
+  $(document).ready(function(){
+    var questions = eval("{{ json|escapejs }}");
+    var survey_url = "{{ survey.url }}";
+    var survey = {{ survey.id }};
 
-  $('.slider').slider({
-    'tooltip': 'hide',
-    'selection': 'none',
-    'step': 0.01, 
-    'value': 0,
-  });
-
-  $('#submit').click(renderResult);
-
-  function renderResult(){
-    var N = questions.length;
-    var payload = [];
-    for (var i = 0; i < N; i++){
-      var q = questions[i];
-      var q_dom = $('#question-' + q.id);
-      var response = { 'survey': survey, 'question': q.id};
-      if (q.qtype=="D"){
-        var choice_index = q_dom.children().children('.active').children().attr('data-choice-index');
-        var mapped = q.value_map[choice_index];
-        var v = mapped;
-      } else if (q.qtype=="C"){
-        var v = q_dom.data('slider').getValue()
-      }
-      if (typeof v != 'undefined'){
-        response.value = v;
-        payload.push(response);
-      }
-    } $.ajax({
-      url: "/survey/" + survey_url + "/submit/",
-      type: "POST",
-      data: JSON.stringify(payload, null, 2),
-      success: function(){ window.location.href = "/survey/" + survey_url + "/thanks/"; },
+    $('.slider').slider({
+      'tooltip': 'hide',
+      'selection': 'none',
+      'step': 0.01, 
+      'value': 0,
     });
-  }
+
+    $('#submit').click(renderResult);
+
+    function renderResult(){
+      var N = questions.length;
+      var payload = [];
+      for (var i = 0; i < N; i++){
+        var q = questions[i];
+        var q_dom = $('#question-' + q.id);
+        var response = { 'survey': survey, 'question': q.id};
+        if (q.qtype=="D"){
+          var choice_index = q_dom.children().children('.active').children().attr('data-choice-index');
+          var mapped = q.value_map[choice_index];
+          var v = mapped;
+        } else if (q.qtype=="C"){
+          var v = q_dom.data('slider').getValue()
+        }
+        if (typeof v != 'undefined'){
+          response.value = v;
+          payload.push(response);
+        }
+      } $.ajax({
+        url: "/survey/" + survey_url + "/submit/",
+        type: "POST",
+        data: JSON.stringify(payload, null, 2),
+        success: function(){ window.location.href = "/survey/" + survey_url + "/thanks/"; },
+      });
+    }
+
+    function drawTicks(){
+      var N = questions.length;
+      var L = 350;
+      var tick_width = 1;
+      for (var i = 0; i < N; i++){
+        var q = questions[i];
+        if (q.qtype=="C"){
+          var container = $('#question-' + q.id + '-container');
+          var ticks_container = $("<div class='ticks-container' id='ticks-" + q.id + "-container'></div>").appendTo(container);
+          var labels_container = $("<div class='labels-container' id='labels-" + q.id + "-container'></div>").appendTo(container);
+          var tick_margin = L / (q.choices.length - 1) - tick_width;
+          var remainder = L - (parseInt(tick_margin) + tick_width) * (q.choices.length - 1);
+
+          $('<div class="tick"></div>').appendTo(ticks_container);
+          for (var j = 1; j < q.choices.length - 1; j++){
+            $('<div class="tick"></div>').appendTo(ticks_container).css('margin-left', tick_margin);
+          }
+          $('<div class="tick"></div>').appendTo(ticks_container).css('margin-left', tick_margin - 1 + remainder);
+ 
+          $('<div class="label">' + q.choices[0] + '</div>').appendTo(labels_container);
+          for (var j = 1; j < q.choices.length - 1; j++){
+            $('<div class="label">' + q.choices[j] + '</div>').appendTo(labels_container).css('margin-left', tick_margin);
+          }
+          $('<div class="label">' + q.choices[q.choices.length - 1] + '</div>')
+            .appendTo(labels_container)
+            .css('margin-left', tick_margin - 1 + remainder);
+        }
+      }
+    }
+    drawTicks();
+
+  });  
+
 </script>
 {% endblock %}

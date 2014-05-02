@@ -19,6 +19,30 @@
   box-shadow: 1px 1px 1px rgba(0,0,0,.2); 
 }
 
+.tick {
+  background-color: rgba(0,0,0,.3);
+  border-radius: 1px;
+  margin-top: -5px;
+  width: 1px;
+  height: 15px;
+  float: left;
+}
+
+.labels-container {
+  width: 350px;
+  text-align: center;
+  margin-bottom: 20px;
+  margin: 0 auto;
+  clear: both;
+}
+
+.ticks-container {
+  width: 350px;
+  text-align: center;
+  margin-bottom: 20px;
+  margin: 0 auto;
+}
+
 .discrete {
   padding: 10px;
   text-align: center;
