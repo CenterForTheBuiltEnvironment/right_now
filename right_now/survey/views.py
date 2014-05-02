@@ -1,6 +1,7 @@
 import json
 import datetime
 import pytz
+import csv
 from decimal import *
 
 from django.shortcuts import render, render_to_response, get_object_or_404
@@ -59,7 +60,7 @@ def submit(request, survey_url):
     c.update(csrf(request))
     workstation = request.session['workstation']
     d = json.loads(request.body)
-    now = datetime.datetime.now(pytz.timezone('US/Pacific'))
+    now = datetime.datetime.now(pytz.utc)
     for r in d:
         q = Question.objects.get(id=r['question'])
         s = Survey.objects.get(id=r['survey'])
@@ -76,3 +77,21 @@ def thanks(request, survey_url):
 
 def report(request, survey_url):
     return render(request, 'survey/report.html')
+
+def render_csv(request, survey_url):
+    survey = get_object_or_404(Survey, url=survey_url)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="report-%s.csv"' % survey.name
+    writer = csv.writer(response)
+    data = Data.objects.filter(survey=survey)
+    comments = Comment.objects.filter(survey=survey)
+    local_tz = pytz.timezone('US/Pacific')
+    for d in data:
+        now = d.datetime.replace(tzinfo=pytz.utc).astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
+        writer.writerow([now, d.subject_id, d.question, d.question.id, d.value])
+    for c in comments:
+        now = c.datetime.replace(tzinfo=pytz.utc).astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
+        writer.writerow([now, c.subject_id, c.question, c.question.id, c.comment])
+     
+    return response
+

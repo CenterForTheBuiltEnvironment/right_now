@@ -63,21 +63,21 @@
           var choice_index = q_dom.children().children('.active').children().attr('data-choice-index');
           var mapped = q.value_map[choice_index];
           var v = mapped;
+          if (v != 'undefined') {
+            response.value = v;
+            payload.push(response);
+          }
         } else if (q.qtype=="C"){
           var v = q_dom.data('slider').getValue()
           var range = q.value_map[1] - q.value_map[0];
           v = v * range / 100 + q.value_map[0];
+          response.value = v;
+          payload.push(response);
         } else if (q.qtype=="T"){
           var c = q_dom.val();
           if (c != ""){
             response.comment = c;
           }
-        }
-        if (typeof v != 'undefined'){
-          response.value = v;
-          payload.push(response);
-        } else if (typeof c != 'undefined'){
-          payload.push(response);
         }
       } 
       console.log(payload)
@@ -85,7 +85,7 @@
         url: "/survey/" + survey_url + "/submit/",
         type: "POST",
         data: JSON.stringify(payload, null, 2),
-        //success: function(){ window.location.href = "/survey/" + survey_url + "/thanks/"; },
+        success: function(){ window.location.href = "/survey/" + survey_url + "/thanks/"; },
       });
     }
 
