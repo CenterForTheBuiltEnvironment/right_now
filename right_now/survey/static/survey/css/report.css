@@ -1,3 +1,31 @@
-.discrete-question-report-container {
+.question-report-container {
   text-align: center;
 }
+
+svg {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.discrete-results-table {
+  text-align: left;
+  width: 500px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+}
+
+.bar rect {
+  fill: steelblue;
+  shape-rendering: crispEdges;
+}
+
+.bar text {
+  fill: #fff;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
