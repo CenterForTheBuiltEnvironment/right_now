@@ -1,4 +1,98 @@
 {% extends "survey/layout.html" %}
 {% block content %}
-<h1>{{ survey.name }} report!</h1>
+<h2 style="text-align: center">{{ survey.name }} survey results</h2>
+
+<div class="report"></div>
+
+<script>
+
+  $(document).ready(function(){
+    var questions = eval("{{ questions|escapejs }}");
+    var data = eval("{{ data|escapejs }}");
+    var comments = eval("{{ comments|escapejs }}");
+    var report = $('.report');
+
+    questions = _.map(questions, function(q){
+      q.choices = eval(q.choices);
+      q.value_map = eval(q.value_map);
+      return q;
+    });
+
+    _.each(questions, renderChart);
+
+    function renderChart(q){
+      $("<div class='discrete-question-report-container' id='report-" + q.id + "-container'></div>").appendTo(report);
+      if (q.qtype == "D"){
+        renderDiscreteReport(q);
+      }
+    }
+
+    function renderDiscreteReport(q){
+      var aggregates = {};
+      var qdata = _.filter(data, function(d){ return d.question_id == q.id; });
+      var N = qdata.length;
+      var counts = _.countBy(qdata, function(d){ return d.value; });
+      var chart_data = _.map(_.zip(q.choices, q.value_map), function(c){
+        var rv = {};
+        rv.label = c[0];
+        rv.count = counts[c[1]];
+        rv.percentage = 100 * rv.count / N;
+        return rv;
+      });
+     
+      var w = 440;
+      var h = 220;
+      var ri = 70;
+      var ro = 220;
+      color = d3.scale.category20c();
+ 
+      var vis = d3.select('#report-' + q.id + '-container')
+        .append("svg")
+          .data([chart_data])
+          .attr('width', w)
+          .attr('height', h)
+        .append("svg:g")
+          .attr("transform", "translate(" + ro + "," + ro + ")") 
+
+      var arc = d3.svg.arc() 
+          .innerRadius(ri)
+          .outerRadius(ro);
+   
+      var pie = d3.layout.pie()
+          .startAngle(-Math.PI/2) 
+          .endAngle(Math.PI/2) 
+          .value(function(d) { return d.percentage; });
+   
+      var arcs = vis.selectAll("g.slice")
+          .data(pie)
+          .enter()
+            .append("svg:g")
+               .attr("class", "slice");
+
+      arcs.append("svg:path")
+         .attr("fill", function(d, i) { return color(i); } )
+         .attr("d", arc);
+   
+      arcs.append("svg:text")
+          .attr("transform", function(d) {
+                  d.innerRadius = ri;
+                  d.outerRadius = ro;
+                  return "translate(" + arc.centroid(d) + ")";
+          })
+          .attr("text-anchor", "middle")
+          .attr("font-size", "0.95em")
+          .attr("fill", "white")
+          .text(function(d, i) { return chart_data[i].label; });
+    }
+  });
+
+</script>
+
+  {% load staticfiles %}
+  <link rel="stylesheet" type="text/css" href="{% static "survey/css/report.css" %}"></link>
+  <script type="text/javascript" src="{% static "d3.min.js" %}"></script>
+  <script type="text/javascript" src="{% static "underscore.min.js" %}"></script>
+
+  
 {% endblock %}
+
