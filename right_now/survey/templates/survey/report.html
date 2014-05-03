@@ -26,9 +26,20 @@
         renderDiscreteReport(q);
       } else if (q.qtype == "C"){
         renderContinuousReport(q);
+      } else if (q.qtype == "T"){
+        renderComments(q);
       }
     }
 
+    function renderComments(q){
+      var div = $("<div class='question-report-container' id='report-" + q.id + "-container'></div>").appendTo(list);
+      div.append("<li><p class='question-text'>" + q.text + "</p></li>");
+      var mycomments = _.filter(comments, function(c){ return c.question_id == q.id; });  
+      _.each(mycomments, function(c){
+        $('<p class="bubble">' + c.comment + '</p>').appendTo(div);
+      });
+    }
+ 
     function renderContinuousReport(q){
       var div = $("<div class='question-report-container' id='report-" + q.id + "-container'></div>").appendTo(list);
       div.append("<li><p class='question-text'>" + q.text + "</p></li>");
@@ -37,7 +48,6 @@
       var qvalues = _.pluck(qdata, "value");
       var N = qdata.length;
 
-      // A formatter for counts.
       var formatCount = d3.format(",.0f");
 
       var margin = {top: 10, right: 30, bottom: 30, left: 30},
@@ -50,7 +60,6 @@
         q.value_map[1] = q.value_map[0];
         q.value_map[0] = temp;
       }
-      console.log(q.value_map)
       var x = d3.scale.linear()
           .domain(q.value_map)
           .range([0, width]);
@@ -97,6 +106,18 @@
           .attr("transform", "translate(0," + height + ")")
           .call(xAxis);
 
+      var mean = _.reduce(qvalues, function(memo, num){ return memo + num; }, 0) / N;
+      if (N%2 == 0){
+        var median = qvalues.sort()[N/2];
+      } else {
+        var sorted = qvalues.sort();
+        var ix = parseInt(N/2);
+        var median = (sorted[ix] + sorted[ix+1]) / 2;
+      }
+      var table = $('<table class="table table-striped results-table"></table>').appendTo(div);
+      table.append('<thead><tr><th>Mean</th><th>Median</th><th>Count</th></tr></thead>');
+      table.append('<tbody>');
+      table.append('<tr><td>' + mean.toFixed(2) + '</td><td>' + median.toFixed(2) + '</td><td>' + N + '</td></tr></tbody>');
 
     }
 
@@ -159,11 +180,11 @@
           .attr("fill", "white")
           .text(function(d, i) { return chart_data[i].label; });
 
-      var table = $('<table class="table table-striped discrete-results-table"></table>').appendTo(div);
+      var table = $('<table class="table table-striped results-table"></table>').appendTo(div);
       table.append('<thead><tr><th>Category</th><th>%</th><th>Count</th></tr></thead>');
       table.append('<tbody>');
       _.each(chart_data, function(d){
-        table.append('<tr><td>' + d.label + '</td><td>' + d.percentage + '</td><td>' + d.count + '</td></tr>');
+        table.append('<tr><td>' + d.label + '</td><td>' + d.percentage.toFixed(2) + '</td><td>' + d.count + '</td></tr>');
       });
       table.append('<tr><td style="font-weight:bold;">Total</td><td></td><td style="font-weight:bold;">' + N + '</td></tr></tbody>');
     }
@@ -176,6 +197,4 @@
   <script type="text/javascript" src="{% static "d3.min.js" %}"></script>
   <script type="text/javascript" src="{% static "underscore.min.js" %}"></script>
 
-  
 {% endblock %}
-

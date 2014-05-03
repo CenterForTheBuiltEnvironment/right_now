@@ -7,7 +7,7 @@ svg {
   margin-top: 20px;
 }
 
-.discrete-results-table {
+.results-table {
   text-align: left;
   width: 500px;
   margin: 0 auto;
@@ -29,3 +29,43 @@ svg {
   shape-rendering: crispEdges;
 }
 
+.bubble {
+  position: relative;
+  width: 340px;
+  height: 100px;
+  padding: 0px;
+  background: #FFFFFF;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  border: #7F7F7F solid 1px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.bubble:after {
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 15px 15px 0;
+  border-color: #FFFFFF transparent;
+  display: block;
+  width: 0;
+  z-index: 1;
+  bottom: -15px;
+  left: 62px;
+}
+
+.bubble:before {
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 15px 15px 0;
+  border-color: #7F7F7F transparent;
+  display: block;
+  width: 0;
+  z-index: 0;
+  bottom: -16px;
+  left: 62px;
+}
