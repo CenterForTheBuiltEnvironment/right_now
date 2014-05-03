@@ -76,7 +76,13 @@ def thanks(request, survey_url):
     return render(request, 'survey/thanks.html', {'survey': survey})
 
 def report(request, survey_url):
-    return render(request, 'survey/report.html')
+    survey = get_object_or_404(Survey, url=survey_url)
+    questions = []
+    for m in survey.modules.all():
+        questions += Question.objects.filter(module=m)
+    data = Data.objects.filter(survey=survey)
+    comments = Comment.objects.filter(survey=survey)
+    return render(request, 'survey/report.html', {'survey': survey, 'data': data, 'questions': questions, 'comments': comments })
 
 def render_csv(request, survey_url):
     survey = get_object_or_404(Survey, url=survey_url)
@@ -92,6 +98,5 @@ def render_csv(request, survey_url):
     for c in comments:
         now = c.datetime.replace(tzinfo=pytz.utc).astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
         writer.writerow([now, c.subject_id, c.question, c.question.id, c.comment])
-     
     return response
 
