@@ -30,17 +30,18 @@ svg {
 }
 
 .bubble {
+  font-style: italic;
+  box-shadow: 1px 1px 1px rgba(0,0,0,.2); 
   position: relative;
   width: 340px;
-  height: 100px;
-  padding: 0px;
+  padding: 15px;
   background: #FFFFFF;
   -webkit-border-radius: 20px;
   -moz-border-radius: 20px;
   border-radius: 20px;
-  border: #7F7F7F solid 1px;
+  border: #999999 solid 1px;
   margin: 0 auto;
-  margin-bottom: 20px;
+  margin-bottom: 35px;
   margin-top: 20px;
 }
 
@@ -68,4 +69,9 @@ svg {
   z-index: 0;
   bottom: -16px;
   left: 62px;
+}
+
+.axis-label {
+  text-color: #c0c0c0;
+  font-size: 0.85em;
 }

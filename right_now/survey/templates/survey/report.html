@@ -50,7 +50,7 @@
 
       var formatCount = d3.format(",.0f");
 
-      var margin = {top: 10, right: 30, bottom: 30, left: 30},
+      var margin = {top: 10, right: 30, bottom: 60, left: 30},
           width = 600 - margin.left - margin.right,
           height = 300 - margin.top - margin.bottom;
 
@@ -59,7 +59,11 @@
         var temp = q.value_map[1];
         q.value_map[1] = q.value_map[0];
         q.value_map[0] = temp;
+        temp = q.choices[1];
+        q.choices[1] = q.choices[0];
+        q.choices[0] = temp; 
       }
+      console.log(q.choices)
       var x = d3.scale.linear()
           .domain(q.value_map)
           .range([0, width]);
@@ -105,6 +109,21 @@
           .attr("class", "x axis")
           .attr("transform", "translate(0," + height + ")")
           .call(xAxis);
+
+      svg.append("text")
+          .attr("class", "axis-label")
+          .attr("dy", ".75em")
+          .attr("fill", "#707070")
+          .attr("transform", "translate(0," + (height + 40) + ")")
+          .text(q.choices[0])
+
+      svg.append("text")
+          .attr("class", "axis-label")
+          .attr("dy", ".75em")
+          .attr("text-anchor", "end")
+          .attr("fill", "#707070")
+          .attr("transform", "translate(" + width + "," + (height + 40) + ")")
+          .text(q.choices[q.choices.length-1])
 
       var mean = _.reduce(qvalues, function(memo, num){ return memo + num; }, 0) / N;
       if (N%2 == 0){
