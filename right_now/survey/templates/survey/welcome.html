@@ -83,10 +83,10 @@ $(document).ready(function(){
       $("#workstation-number").focus()
     } else {
       $.ajax({
-        url: "/survey/" + survey_url + "/session/",
+        url: "/right_now/survey/" + survey_url + "/session/",
         type: 'POST',
         data: {'workstation': workstation},
-        success: function(){ window.location.href = "/survey/" + survey_url + "/survey/"; },
+        success: function(){ window.location.href = "/right_now/survey/" + survey_url + "/survey/"; },
       });
     }
   });

@@ -40,7 +40,9 @@ def survey(request, survey_url):
     for m in modules:
         for q in m['questions']:
             keys= ['id', 'text', 'name', 'choices', 'value_map', 'qtype']
-            obj = {k: getattr(q, k) for k in keys}
+            obj = {}
+            for k in keys:
+                obj[k] = getattr(q, k)
             questions_json.append(obj)
 
     questions_json = json.dumps(questions_json)
@@ -84,19 +86,26 @@ def report(request, survey_url):
     keys = ['id', 'name', 'text', 'qtype', 'choices', 'value_map']
     questions_json = []
     for q in questions:
-        questions_json.append({ k: q.__dict__.get(k) for k in keys })
+        obj = {}
+        for k in keys:
+            obj[k] = q.__dict__.get(k)
+        questions_json.append(obj)
     data = Data.objects.filter(survey=survey)
     data_json = []
 
     keys = ['question_id', 'subject_id', 'value']
     for d in data:
-        data_json.append({ k: float(d.__dict__.get(k)) for k in keys })
+        obj = {}
+        for k in keys:
+            obj[k] = d.__dict__.get(k)
     comments = Comment.objects.filter(survey=survey)
     comments_json = []
 
     keys = ['question_id', 'subject_id', 'comment']
     for c in comments: 
-      comments_json.append({ k: c.__dict__.get(k) for k in keys })
+        obj = {}
+        for k in keys:
+            obj[k] = c.__dict__.get(k)
     ctx = { 'survey': survey, 
             'data': json.dumps(data_json), 
             'questions': json.dumps(questions_json), 
