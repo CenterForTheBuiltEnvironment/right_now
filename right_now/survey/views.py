@@ -4,6 +4,7 @@ import pytz
 import csv
 from decimal import *
 
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.core.context_processors import csrf
 from django.http import HttpResponse
@@ -20,6 +21,7 @@ def index(request):
     })
     return HttpResponse(template.render(context))
 
+@ensure_csrf_cookie
 def welcome(request, survey_url):
     try:
         workstation = request.session['workstation']
