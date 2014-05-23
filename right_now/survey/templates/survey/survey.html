@@ -83,10 +83,10 @@
       } 
       console.log(payload)
       $.ajax({
-        url: "/right_now/survey/" + survey_url + "/submit/",
+        url: "/survey/" + survey_url + "/submit/",
         type: "POST",
         data: JSON.stringify(payload, null, 2),
-        success: function(){ window.location.href = "/right_now/survey/" + survey_url + "/thanks/"; },
+        success: function(){ window.location.href = "/survey/" + survey_url + "/thanks/"; },
       });
     }
 
