@@ -151,7 +151,12 @@
         var rv = {};
         rv.label = c[0];
         rv.count = counts[c[1]];
-        rv.percentage = 100 * rv.count / N;
+        if (rv.count === undefined){
+          rv.count = 0;
+          rv.percentage = 0;
+        } else {
+          rv.percentage = 100 * rv.count / N;
+        }
         return rv;
       });
      
@@ -203,7 +208,7 @@
       table.append('<thead><tr><th>Category</th><th>%</th><th>Count</th></tr></thead>');
       table.append('<tbody>');
       _.each(chart_data, function(d){
-        table.append('<tr><td>' + d.label + '</td><td>' + d.percentage.toFixed(2) + '</td><td>' + d.count + '</td></tr>');
+        table.append('<tr><td>' + d.label + '</td><td>' + d.percentage.toFixed(1) + '</td><td>' + d.count + '</td></tr>');
       });
       table.append('<tr><td style="font-weight:bold;">Total</td><td></td><td style="font-weight:bold;">' + N + '</td></tr></tbody>');
     }
