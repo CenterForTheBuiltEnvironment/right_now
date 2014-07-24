@@ -2,6 +2,7 @@ import json
 import datetime
 import pytz
 import csv
+import unicodedata
 from decimal import *
 
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -90,7 +91,7 @@ def report(request, survey_url):
     data = Data.objects.filter(survey=survey)
     data_json = []
 
-    keys = ['question_id', 'subject_id', 'value']
+    keys = ['question_id','value']
     for d in data:
         data_json.append({ k: float(d.__dict__.get(k)) for k in keys })
     comments = Comment.objects.filter(survey=survey)
@@ -117,7 +118,8 @@ def render_csv(request, survey_url):
         now = d.datetime.replace(tzinfo=pytz.utc).astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
         writer.writerow([now, d.subject_id, d.question, d.question.id, d.value])
     for c in comments:
+        nfkd_comment = unicodedata.normalize('NFKD', c.comment).encode('ascii', 'ignore')
         now = c.datetime.replace(tzinfo=pytz.utc).astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
-        writer.writerow([now, c.subject_id, c.question, c.question.id, c.comment])
+        writer.writerow([now, c.subject_id, c.question, c.question.id, nfkd_comment])
     return response
 
