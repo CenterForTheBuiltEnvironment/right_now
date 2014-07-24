@@ -101,7 +101,7 @@
           var container = $('#question-' + q.id + '-container');
           var ticks_container = $("<div class='ticks-container' id='ticks-" + q.id + "-container'></div>").appendTo(container);
           var labels_container = $("<div class='labels-container' id='labels-" + q.id + "-container'></div>").appendTo(container);
-          var tick_margin = L / (M - 1) - tick_width;
+          var tick_margin = parseInt(L / (M - 1) - tick_width);
           var remainder = L - (parseInt(tick_margin) + tick_width) * (q.choices.length - 1);
           var label_width = 58;
           var label_margin = (408 - 58 * M) / (M - 1);
