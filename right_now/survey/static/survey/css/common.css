@@ -90,6 +90,7 @@
 
 .thumbnail.selected {
   border: 1px double #0D80BF;
+  background-color: aliceblue;
 }
 
 .thumbnail .caption {
