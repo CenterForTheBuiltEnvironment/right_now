@@ -83,3 +83,16 @@
   margin-top: 10px;
   margin-bottom: 20px;
 }
+
+.thumbnail.hover {
+  border-color: #94D1F2;
+}
+
+.thumbnail.selected {
+  border: 1px double #0D80BF;
+}
+
+.thumbnail .caption {
+  color: rgba(0,0,0,0.5);
+  font-size: 0.84em;
+}
