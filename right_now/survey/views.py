@@ -23,6 +23,15 @@ def index(request):
     return HttpResponse(template.render(context))
 
 @ensure_csrf_cookie
+def login(request):
+    if request.POST:
+        print request.POST
+        print request.POST.get('username')
+        return render(request, 'survey/login.html', {})
+    else:
+        return render(request, 'survey/login.html', {})
+
+@ensure_csrf_cookie
 def welcome(request, survey_url):
     try:
         workstation = request.session['workstation']
