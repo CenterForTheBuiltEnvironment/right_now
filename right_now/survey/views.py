@@ -8,12 +8,15 @@ from decimal import *
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.core.context_processors import csrf
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth import authenticate, login, logout
 
 from survey.models import Survey, Question, Data, Comment
 
+@user_passes_test(lambda u: u.is_superuser)
 def index(request):
     latest_survey_list = Survey.objects.order_by('-date_created')[:5]
     template = loader.get_template('survey/index.html')
@@ -23,13 +26,22 @@ def index(request):
     return HttpResponse(template.render(context))
 
 @ensure_csrf_cookie
-def login(request):
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect('/survey/login/')
+
+@ensure_csrf_cookie
+def login_view(request):
     if request.POST:
-        print request.POST
-        print request.POST.get('username')
-        return render(request, 'survey/login.html', {})
-    else:
-        return render(request, 'survey/login.html', {})
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        print user
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect('/survey/')
+    return render(request, 'survey/login.html', {})
 
 @ensure_csrf_cookie
 def welcome(request, survey_url):
@@ -87,6 +99,7 @@ def submit(request, survey_url):
 def thanks(request, survey_url):
     return render(request, 'survey/thanks.html', {'survey': survey})
 
+@login_required
 def report(request, survey_url):
     survey = get_object_or_404(Survey, url=survey_url)
     questions = []
@@ -115,6 +128,7 @@ def report(request, survey_url):
             'comments': json.dumps(comments_json) }
     return render(request, 'survey/report.html', ctx)
 
+@login_required
 def render_csv(request, survey_url):
     survey = get_object_or_404(Survey, url=survey_url)
     response = HttpResponse(content_type='text/csv')
