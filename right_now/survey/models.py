@@ -7,6 +7,7 @@ QUESTION_TYPES = (
     ('C', 'Continuous'),
     ('D', 'Discrete'),
     ('T', 'Text'),
+    ('S', 'Special'),
 )
 
 class Module(models.Model):
@@ -18,10 +19,10 @@ class Module(models.Model):
 
 class Question(models.Model):
     name = models.CharField(max_length=80)
-    text = models.TextField()
+    text = models.TextField(blank=True)
     qtype = models.CharField(max_length=1, choices=QUESTION_TYPES) 
-    choices = JSONField()
-    value_map = JSONField()
+    choices = JSONField(blank=True)
+    value_map = JSONField(blank=True)
     module = models.ForeignKey('Module')
 
     def __unicode__(self):

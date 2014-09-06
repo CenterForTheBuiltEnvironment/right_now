@@ -4,35 +4,34 @@
 <ol>
 {% for m in modules %}
   {% for q in m.questions %}
-  <li><p class="question-text">{{ q.text }}</p></li>
+    <li><p class="question-text">{{ q.text }}</p></li>
     {% if q.qtype == "C" %}
-    <div class='slider-container' id="question-{{ q.id }}-container">
-      <input type="text" id="question-{{ q.id }}" class="slider" data-slider-min="0" data-slider-max="100"> 
-    </div>
-    {% elif q.qtype == "D" %}
-
-    <div class='discrete' id="question-{{ q.id }}">
-      <div class='btn-group' data-toggle="buttons">  
-        {% for c in q.choices %}
-        <label class='btn btn-default'>
-          <input type='radio' data-choice-index={{ forloop.counter0 }} id='{{ q.name }}-{{ forloop.counter0 }}' name='radio'>{{ c }}
-        </label>
-        {% endfor %}
+      <div class='slider-container' id="question-{{ q.id }}-container">
+        <input type="text" id="question-{{ q.id }}" class="slider" data-slider-min="0" data-slider-max="100"> 
       </div>
-    </div>
-
+    {% elif q.qtype == "D" %}
+      <div class='discrete' id="question-{{ q.id }}">
+        <div class='btn-group' data-toggle="buttons">  
+          {% for c in q.choices %}
+          <label class='btn btn-default'>
+            <input type='radio' data-choice-index={{ forloop.counter0 }} id='{{ q.name }}-{{ forloop.counter0 }}' name='radio'>{{ c }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
     {% elif q.qtype == "T" %}
-    <div class='text-input-container'>
-      <textarea id="question-{{ q.id }}"class="form-control" rows="3"></textarea>
-    </div>
+      <div class='text-input-container'>
+        <textarea id="question-{{ q.id }}"class="form-control" rows="3"></textarea>
+      </div>
     {% endif %}
-    {% endfor %}
-  </li>
+  {% endfor %}
+
+  <!--Special Modules-->
+  {% if m.name == "SpecialClothingModule" %}
+    {% include "survey/clothing.html" %}
+  {% endif %}
 
 {% endfor %}
-
-{% include "survey/clothing.html" %}
-
 
   <div id='submit-container' style="margin: 0 auto; width: 50%; padding: 20px; text-align: center;">
     <button id='submit' class='btn btn-success btn-lg'>Submit</button> 
@@ -83,9 +82,14 @@
             response.comment = c;
             payload.push(response);
           }
+        } else if (q.qtype=="S"){
+          // Special modules
+          if (q.name == "SpecialClothingLevel"){
+            response.value = get_clo();
+            payload.push(response);
+          }
         }
       } 
-      console.log(payload)
       $.ajax({
         url: "/survey/" + survey_url + "/submit/",
         type: "POST",
