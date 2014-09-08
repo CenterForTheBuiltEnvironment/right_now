@@ -2,12 +2,16 @@
 {% block content %}
 
   <div class="login-container">
-    <form action="/survey/login/" method="post" class="form-signin" role="form">
-      {% csrf_token %}
-      <input type="text" class="form-control" name="username" placeholder="Username" required autofocus>
-      <input type="password" class="form-control" name="password" placeholder="Password" required style="margin-bottom:20px">
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-    </form>
+    {% if user.is_authenticated %}
+      <p style="text-align:center">Currently logged in as <b>{{ user }}</b></p>
+    {% else %}
+      <form action="/survey/login/" method="post" class="form-signin" role="form">
+        {% csrf_token %}
+        <input type="text" class="form-control" name="username" placeholder="Username" required autofocus>
+        <input type="password" class="form-control" name="password" placeholder="Password" required style="margin-bottom:20px">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+    {% endif %}
   </div>
 
 {% endblock %}
