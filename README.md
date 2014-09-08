@@ -5,6 +5,6 @@ A web application for "Right Now" thermal comfort and acceptability surveys.
 
 Todos:
 
- 1. Clothing integration
- 2. Rework aspects of database: many2many for modules/questions, way of representing special modules like the clothing selector
+ 1. Correct clo values for each article in the clothing selector
+ 2. Load default questions if db is empty
  3. Docs
