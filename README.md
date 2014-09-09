@@ -68,9 +68,9 @@ Start by running the development server:
 $ python manage.py runserver
 ```
 
-Visit [http://localhost:8000/admin] and enter the credentials you created during the installation process. You should see an auth table and a survey table. In the survey table, you can see Questions, Modules, and Surveys. If you click on Surveys, you should see an entry for Test Survey. The survey is defined by a name, a list of modules, a url. Copy the url string (V6KAU), and visit [http://localhost:8000/survey/V6KAU] to see the survey.
+Visit <http://localhost:8000/admin> and enter the credentials you created during the installation process. You should see an auth table and a survey table. In the survey table, you can see Questions, Modules, and Surveys. If you click on Surveys, you should see an entry for Test Survey. The survey is defined by a name, a list of modules, a url. Copy the url string (V6KAU), and visit <http://localhost:8000/survey/V6KAU> to see the survey.
 
-Superusers can also visit [http://localhost:8000/survey] to see a list of surveys.
+Superusers can also visit <http://localhost:8000/survey> to see a list of surveys.
 
 
 Users
@@ -88,7 +88,7 @@ Each survey has a report that is viewable by superusers and users. Get data from
 Adding a new survey
 ===================
 
-In the survey table admin page [http://localhost:8000/admin/survey/survey/], you can click "Add survey" in the upper left hand corner. Fill out the name of the survey and a contact email. Select multiple modules by holding down command on a mac or ctrl on a linux or windows machine. Copy the randomly generated url string.
+In the survey table admin page <http://localhost:8000/admin/survey/survey/>, you can click "Add survey" in the upper left hand corner. Fill out the name of the survey and a contact email. Select multiple modules by holding down command on a mac or ctrl on a linux or windows machine. Copy the randomly generated url string.
 
 And that's it! Visit http://localhost:8000/survey/<my url string> to see your survey live.
 
@@ -140,3 +140,9 @@ Special questions and modules
 =============================
 
 Special modules are special. Such as the clothing interface. This is how they work.
+
+
+Survey welcome text
+===================
+
+Currently the welcome text is the same for every survey. Modify the ``welcome.html`` template as necessary.
