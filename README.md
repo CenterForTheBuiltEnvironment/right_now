@@ -1,7 +1,7 @@
 Right Now
 =========
 
-A web application for "Right Now" thermal comfort and acceptability surveys.
+A web application for "Right Now" thermal comfort, acceptability, or other surveys. Create surveys dynamically with a customized set of questions and administer the survey privately as the researcher chooses. User interfaces adapt  to the types of questions you include, whether the response is continuous, discrete, or text. Graphical reports are dynamically generated to give a summary of the reponses, and the raw data can be accessed by researchers for more detailed analysis.
 
 
 Installation
