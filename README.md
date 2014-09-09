@@ -10,34 +10,35 @@ Todos:
 Installation
 ============
 
-- Install [Python 2.7](https://www.python.org/download/releases/2.7/) (or check that you have it)
-- Install pip. See [pip installation](http://pip.readthedocs.org/en/latest/installing.html), or run
+Install [Python 2.7](https://www.python.org/download/releases/2.7/) (or check that you have it)
+
+Install pip. See [pip installation](http://pip.readthedocs.org/en/latest/installing.html), or run
 
 ```bash
 $ curl https://bootstrap.pypa.io/get-pip.py | python
 ```
 
-- Install virtualenv:
+Install virtualenv:
 
 ```bash
 $ pip install virtualenv
 ```
 
-- Clone this repo:
+Clone this repo:
 
 ```bash
 $ git clone https://github.com/CenterForTheBuiltEnvironment/right_now.git
 $ cd right_now
 ```
 
-- Create a virtualenv and activate it:
+Create a virtualenv and activate it:
 
 ```bash
 $ virtualenv venv
 $ . venv/bin/activate
 ```
 
-- Install all of the tool's dependencies:
+Install all of the tool's dependencies:
 
 ```bash
 $ pip install -r requirements.txt
@@ -51,9 +52,9 @@ $ python manage.py syncdb
 $ python manage.py loaddata survey_init
 ```
 
-- After you run the ``syncdb`` command, you will be prompted to create a superuser. Create one you will remember! You will use these credentials to log into the administration interface and create new surveys.
+After you run the ``syncdb`` command, you will be prompted to create a superuser. Create one you will remember! You will use these credentials to log into the administration interface and create new surveys.
 
-- Deployment. The development database is SQLite3, which is packaged with Python and doesn't require setup in the installation process. If you are deploying the tool for production use, you will probably want to install a different database, like [Postgres](http://www.postgresql.org/). See [django docs](https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/modwsgi/) to learn how to deploy a Django application with Apache and mod_wdgi.
+Deployment note: The development database is SQLite3, which is packaged with Python and doesn't require setup in the installation process. If you are deploying the tool for production use, you will probably want to install a different database, like [Postgres](http://www.postgresql.org/). See [django docs](https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/modwsgi/) to learn how to deploy a Django application with Apache and mod_wdgi.
 
 
 Using the tool
@@ -67,14 +68,27 @@ Start by running the development server:
 $ python manage.py runserver
 ```
 
-Visit http://localhost:8000/admin and enter the credentials you created during the installation process. You should see an auth table and a survey table. In the survey table, you can see Questions, Modules, and Surveys. If you click on Surveys, you should see an entry for Test Survey. The survey is defined by a name, a list of modules, a url. Copy the url string (V6KAU), and visit http://localhost:8000/survey/V6KAU to see the survey.
+Visit [http://localhost:8000/admin] and enter the credentials you created during the installation process. You should see an auth table and a survey table. In the survey table, you can see Questions, Modules, and Surveys. If you click on Surveys, you should see an entry for Test Survey. The survey is defined by a name, a list of modules, a url. Copy the url string (V6KAU), and visit [http://localhost:8000/survey/V6KAU] to see the survey.
 
-Superusers can also visit http://localhost:8000/survey to see a list of surveys.
+Superusers can also visit [http://localhost:8000/survey] to see a list of surveys.
+
+
+Users
+=====
+
+Create a new user. Superusers v. regular users.
+
+
+Report
+======
+
+Each survey has a report that is viewable by superusers and users. Get data from the survey/<token>/csv resource.
+
 
 Adding a new survey
 ===================
 
-In the survey table admin page (http://localhost:8000/admin/survey/survey/), you can click "Add survey" in the upper left hand corner. Fill out the name of the survey and a contact email. Select multiple modules by holding down command on a mac or ctrl on a linux or windows machine. Copy the randomly generated url string.
+In the survey table admin page [http://localhost:8000/admin/survey/survey/], you can click "Add survey" in the upper left hand corner. Fill out the name of the survey and a contact email. Select multiple modules by holding down command on a mac or ctrl on a linux or windows machine. Copy the randomly generated url string.
 
 And that's it! Visit http://localhost:8000/survey/<my url string> to see your survey live.
 
