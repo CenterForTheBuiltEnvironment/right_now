@@ -4,7 +4,7 @@
 <div class="clothing">
   <div class="row">
     <div class="col-xs-4 col-md-4">
-      <div class="thumbnail" id="sweater" data-clo="0.2">
+      <div class="thumbnail" id="sweater" data-clo="0.25">
         <img src="{% static "survey/img/sweater.png" %}" alt="...">
         <div class="caption">
           Sweater
@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="col-xs-4 col-md-4">
-      <div class="thumbnail" id="tshirt" data-clo="0.05">
+      <div class="thumbnail" id="tshirt" data-clo="0.08">
         <img src="{% static "survey/img/tshirt.png" %}" alt="...">
         <div class="caption">
           T-shirt
@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="col-xs-4 col-md-4">
-      <div class="thumbnail" id="jacket" data-clo="0.3">
+      <div class="thumbnail" id="jacket" data-clo="0.36">
         <img src="{% static "survey/img/jacket.png" %}" alt="...">
         <div class="caption">
           Jacket
@@ -39,7 +39,7 @@
       </div>
     </div>
     <div class="col-xs-4 col-md-4">
-      <div class="thumbnail" id="tie" data-clo="0.1" style="margin-top: -9px;">
+      <div class="thumbnail" id="tie" data-clo="0.02" style="margin-top: -9px;">
         <img src="{% static "survey/img/tie.png" %}" alt="...">
         <div class="caption">
           Tie
@@ -47,7 +47,7 @@
       </div>
     </div>
     <div class="col-xs-4 col-md-4">
-      <div class="thumbnail" id="shorts" data-clo="0.1" style="margin-top: -3px;">
+      <div class="thumbnail" id="shorts" data-clo="0.08" style="margin-top: -3px;">
         <img src="{% static "survey/img/shorts.png" %}" alt="...">
         <div class="caption">
           Shorts
@@ -58,7 +58,7 @@
 
   <div class="row">
     <div class="col-xs-4 col-md-4">
-      <div class="thumbnail" id="trousers" data-clo="0.2">
+      <div class="thumbnail" id="trousers" data-clo="0.19">
         <img src="{% static "survey/img/trousers.png" %}" alt="...">
         <div class="caption">
           Trousers
@@ -66,7 +66,7 @@
       </div>
     </div>
     <div class="col-xs-4 col-md-4">
-      <div class="thumbnail" id="skirt" data-clo="0.2" style="margin-top: -30px;">
+      <div class="thumbnail" id="skirt" data-clo="0.18" style="margin-top: -30px;">
         <img src="{% static "survey/img/skirt.png" %}" alt="...">
         <div class="caption">
           Skirt
@@ -94,7 +94,7 @@
       </div>
     </div>
     <div class="col-xs-4 col-md-4">
-      <div class="thumbnail" id="shoes" data-clo="0.03" style="margin-top: -54px;">
+      <div class="thumbnail" id="shoes" data-clo="0.02" style="margin-top: -54px;">
         <img src="{% static "survey/img/shoes.png" %}" alt="...">
         <div class="caption">
           Shoes
@@ -106,6 +106,7 @@
 
 <script>
 
+   
   $(document).ready(function(){
 
     $('.thumbnail').hover(function(){
@@ -117,7 +118,8 @@
   });
 
   function get_clo(){
-    var r = 0;
+    // baseline clo level for underwear: 0.2
+    var r = 0.2;
     $('.thumbnail.selected').each(function(){
       var clo = $(this).data("clo");
       r += clo;
