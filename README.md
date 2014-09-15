@@ -155,6 +155,5 @@ In includes several pieces:
 Todos
 =====
 
- 1. Correct clo values for each article in the clothing selector
- 2. User should login and see the list of surveys that they have created.
- 3. Users should be able to change their password
+ 1. User should login and see the list of surveys that they have created.
+ 2. Users should be able to change their password
