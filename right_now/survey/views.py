@@ -36,7 +36,6 @@ def login_view(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
-        print user
         if user is not None:
             if user.is_active:
                 login(request, user)
@@ -57,7 +56,7 @@ def survey(request, survey_url):
     survey = get_object_or_404(Survey, url=survey_url) 
     modules = []
     for m in survey.modules.all():
-        questions = Question.objects.filter(module=m.id)
+        questions = Question.objects.filter(module=m.id).order_by('order')
         modules.append({'name': m.name, 'questions': questions})
         
     questions_json = []

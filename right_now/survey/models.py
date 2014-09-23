@@ -24,6 +24,7 @@ class Question(models.Model):
     choices = JSONField(blank=True)
     value_map = JSONField(blank=True)
     module = models.ForeignKey('Module')
+    order = models.IntegerField(default=1)
 
     def __unicode__(self):
         return self.name
@@ -47,7 +48,7 @@ class Survey(models.Model):
     def get_survey_url():
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
 
-    date_created = models.DateTimeField('Date created')
+    date_created = models.DateTimeField('Date created', auto_now_add=True)
     name = models.CharField(max_length=80)
     contact = models.EmailField()
     modules = models.ManyToManyField(Module)
