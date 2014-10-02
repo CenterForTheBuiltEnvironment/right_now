@@ -53,6 +53,15 @@
       'value': 50,
     });
 
+    $('.slider-handle.round')
+      .css('background-image', 'linear-gradient(to bottom, #c0c0c0, #555555)');
+
+    $('div.slider').click(function(){
+      $(this).data('clicked', true);
+      $(this).find('.slider-handle.round')
+        .css('background-image', 'linear-gradient(to bottom, #149bdf, #0480be)');
+    });
+
     $('#submit').click(renderResult);
 
     function renderResult(){
@@ -71,11 +80,14 @@
             payload.push(response);
           }
         } else if (q.qtype=="C"){
-          var v = q_dom.data('slider').getValue()
-          var range = q.value_map[1] - q.value_map[0];
-          v = v * range / 100 + q.value_map[0];
-          response.value = v;
-          payload.push(response);
+          var clicked = q_dom.closest('div.slider').data('clicked');
+          if (clicked){
+            var v = q_dom.data('slider').getValue()
+            var range = q.value_map[1] - q.value_map[0];
+            v = v * range / 100 + q.value_map[0];
+            response.value = v;
+            payload.push(response);
+          }
         } else if (q.qtype=="T"){
           var c = q_dom.val();
           if (c != ""){
