@@ -1,0 +1,22 @@
+{% extends "survey/layout.html" %}
+{% block content %}
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="login-container">
+        <form action="/survey/signup/" method="post" class="form-signup" role="form">
+          {% csrf_token %}
+          <input type="text" class="form-control" name="username" placeholder="username" required autofocus>
+          <input type="text" class="form-control" name="email" placeholder="email" required> 
+          <input type="password" class="form-control" name="password1" placeholder="password" required>
+          <input type="password" class="form-control" name="password2" placeholder="confirm password" required style="margin-bottom:20px;">
+  
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+        </form>
+    </div>
+
+{% endblock %}

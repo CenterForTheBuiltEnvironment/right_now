@@ -44,6 +44,36 @@ def login_view(request):
                 return HttpResponseRedirect('/survey/')
     return render(request, 'survey/login.html', {})
 
+def signup(request):
+    if request.POST:
+        username = request.POST['username']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        email = request.POST['email']
+
+        # validate the username, email, and password
+
+        if password1!=password2:
+            messages.error(request, 'Passwords do not match.')
+            return HttpResponseRedirect('/survey/signup/')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'A user already exists for the email address provided.')
+            return HttpResponseRedirect('/survey/signup/')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Username not available.')
+            return HttpResponseRedirect('/survey/signup/')
+
+        user = User.objects.create_user(username, email=email, password=password2)
+        user = authenticate(username=username, password=password2)
+        login(request, user)
+        messages.success(request, 'Signup successful! Create your first survey below.')
+        return HttpResponseRedirect('/survey/')
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/survey/')
+    return render(request, 'survey/signup.html')
+
 @ensure_csrf_cookie
 def welcome(request, survey_url):
     try:
