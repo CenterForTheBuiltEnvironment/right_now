@@ -52,7 +52,7 @@ class Survey(models.Model):
     name = models.CharField(max_length=80)
     modules = models.ManyToManyField(Module)
     url = models.CharField(max_length=5, default=get_survey_url())
-    user = models.OneToOneField(User)
+    user = models.ForeignKey(User)
     active = models.BooleanField(default=True)
 
     def __unicode__(self):
