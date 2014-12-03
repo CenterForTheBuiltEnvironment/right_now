@@ -14,15 +14,16 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.models import User
 
 from survey.models import Survey, Question, Data, Comment, Module
 
-@user_passes_test(lambda u: u.is_superuser)
+@login_required
 def index(request):
-    latest_survey_list = Survey.objects.order_by('-date_created')[:5]
+    surveys = Survey.objects.filter(user=request.user.id)
     template = loader.get_template('survey/index.html')
     context = RequestContext(request, {
-        'latest_survey_list': latest_survey_list,
+        'surveys': surveys,
     })
     return HttpResponse(template.render(context))
 
@@ -55,8 +56,8 @@ def welcome(request, survey_url):
 def create(request):
     if request.POST:
         name = request.POST['survey-name']
-        contact = request.POST['survey-contact']
-        s = Survey(name=name, contact=contact)
+        user = User.objects.get(id__exact=request.user.id)
+        s = Survey(name=name, user=user)
         s.save()
         modules = Module.objects.filter(id__in=request.POST.getlist('modules'))
         for m in modules:
@@ -162,4 +163,3 @@ def render_csv(request, survey_url):
         now = c.datetime.replace(tzinfo=pytz.utc).astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
         writer.writerow([now, c.subject_id, c.question, c.question.id, nfkd_comment])
     return response
-

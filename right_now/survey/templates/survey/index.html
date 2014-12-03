@@ -7,17 +7,23 @@
     {% endfor %}
 {% endif %}
 
-{% if latest_survey_list %}
+{% if surveys %}
     <table class="table table-hover">
         <thead>
             <tr><th>Survey</th><th>Date created</th><th>Active</th><th>Report</th><th>Download</th></tr>
         </thead>
         <tbody>
-            {% for survey in latest_survey_list %}
+            {% for survey in surveys %}
                 <tr>
                     <td><a href="/survey/{{ survey.url }}/">{{ survey.name }}</a></td>
                     <td>{{ survey.date_created.date }}</td>
-                    <td>Yes</td>
+                    <td>
+                        {% if survey.active %}
+                            <span style="color: green;" class="glyphicon glyphicon-ok"></span>
+                        {% else %}
+                            <span style="color: red;" class="glyphicon glyphicon-remove"></span>
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="/survey/{{ survey.url }}/report">
                             <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
