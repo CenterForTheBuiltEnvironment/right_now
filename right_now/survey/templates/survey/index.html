@@ -1,5 +1,11 @@
 {% extends "survey/layout.html" %}
 {% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
 {% if latest_survey_list %}
     <ul>
     {% for survey in latest_survey_list %}

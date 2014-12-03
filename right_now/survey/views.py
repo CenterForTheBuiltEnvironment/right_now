@@ -13,8 +13,9 @@ from django.template import RequestContext, loader
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
-from survey.models import Survey, Question, Data, Comment
+from survey.models import Survey, Question, Data, Comment, Module
 
 @user_passes_test(lambda u: u.is_superuser)
 def index(request):
@@ -49,6 +50,23 @@ def welcome(request, survey_url):
         return render(request, 'survey/welcome.html', {'workstation': workstation, 'survey_url': survey_url})
     except KeyError:
         return render(request, 'survey/welcome.html', {'workstation': None, 'survey_url': survey_url })
+
+@login_required
+def create(request):
+    if request.POST:
+        name = request.POST['survey-name']
+        contact = request.POST['survey-contact']
+        s = Survey(name=name, contact=contact)
+        s.save()
+        modules = Module.objects.filter(id__in=request.POST.getlist('modules'))
+        for m in modules:
+            s.modules.add(m)
+        messages.success(request, 'New survey successfully created.')
+        return HttpResponseRedirect('/survey/')
+    else:
+        modules = Module.objects.all()
+        ctx = {'modules': modules}
+        return render(request, 'survey/create.html', ctx)
 
 def survey(request, survey_url):
     if request.session['workstation'] is None:
