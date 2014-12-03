@@ -3,6 +3,9 @@ import random
 from django.db import models
 from json_field import JSONField
 
+def get_survey_url():
+    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
+
 QUESTION_TYPES = (
     ('C', 'Continuous'),
     ('D', 'Discrete'),
@@ -42,12 +45,8 @@ class Comment(models.Model):
     question = models.ForeignKey('Question')
     subject_id = models.CharField(max_length=50)
     comment = models.TextField()
-
-class Survey(models.Model):
     
-    def get_survey_url():
-        return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
-
+class Survey(models.Model):
     date_created = models.DateTimeField('Date created', auto_now_add=True)
     name = models.CharField(max_length=80)
     contact = models.EmailField()
