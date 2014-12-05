@@ -7,16 +7,7 @@
                 <label for="survey-name">Survey name</label>
                 <input class="form-control" name="survey-name" placeholder="My survey" required autofocus>
             </div>
-            <div class="form-group">
-                <label>Modules</label>
-                {% for m in modules %}
-                    <div class="checkbox">
-                        <label>
-                            <input name="modules" value="{{m.id}}" type="checkbox">{{m.name}}
-                        </label>
-                    </div>
-                {% endfor %}    
-            </div>
+            {% include "survey/modules.html" %}
             <button type="submit" class="btn btn-default">Submit</button>
         </form>
     </div>

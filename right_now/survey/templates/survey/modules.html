@@ -1,0 +1,10 @@
+<div class="form-group">
+    <label>Modules</label>
+    {% for m in modules %}
+        <div class="checkbox">
+            <label>
+                <input name="modules" value="{{m.id}}" type="checkbox">{{m.name}}
+            </label>
+        </div>
+    {% endfor %}    
+</div>

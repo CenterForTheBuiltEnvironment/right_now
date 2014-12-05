@@ -3,6 +3,8 @@ import datetime
 import pytz
 import csv
 import unicodedata
+import random
+import string
 from decimal import *
 
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -18,12 +20,17 @@ from django.contrib.auth.models import User
 
 from survey.models import Survey, Question, Data, Comment, Module
 
+def get_survey_url():
+    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
+
 @login_required
 def index(request):
     surveys = Survey.objects.filter(user=request.user.id)
     template = loader.get_template('survey/index.html')
+    modules = Module.objects.all()
     context = RequestContext(request, {
         'surveys': surveys,
+        'modules': modules,
     })
     return HttpResponse(template.render(context))
 
@@ -87,7 +94,7 @@ def create(request):
     if request.POST:
         name = request.POST['survey-name']
         user = User.objects.get(id__exact=request.user.id)
-        s = Survey(name=name, user=user)
+        s = Survey(name=name, user=user, url=get_survey_url())
         s.save()
         modules = Module.objects.filter(id__in=request.POST.getlist('modules'))
         for m in modules:

@@ -1,11 +1,6 @@
-import string
-import random
 from django.db import models
 from json_field import JSONField
 from django.contrib.auth.models import User
-
-def get_survey_url():
-    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
 
 QUESTION_TYPES = (
     ('C', 'Continuous'),
@@ -51,9 +46,10 @@ class Survey(models.Model):
     date_created = models.DateTimeField('Date created', auto_now_add=True)
     name = models.CharField(max_length=80)
     modules = models.ManyToManyField(Module)
-    url = models.CharField(max_length=5, default=get_survey_url())
+    url = models.CharField(max_length=5)
     user = models.ForeignKey(User)
     active = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.name
+
