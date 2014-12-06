@@ -83,11 +83,25 @@ def signup(request):
 
 @ensure_csrf_cookie
 def welcome(request, survey_url):
-    try:
-        workstation = request.session['workstation']
-        return render(request, 'survey/welcome.html', {'workstation': workstation, 'survey_url': survey_url})
-    except KeyError:
-        return render(request, 'survey/welcome.html', {'workstation': None, 'survey_url': survey_url })
+    survey = Survey.objects.get(url__exact=survey_url)
+    ctx = { 'workstation': request.session.get('workstation'), 'survey_url': survey_url, 'active': survey.active }
+    return render(request, 'survey/welcome.html', ctx)
+
+@login_required
+def edit(request):
+    if request.POST:
+        params = json.loads(request.body)
+        _id = params['id']
+        name = params['name']
+        active = params['active']
+        survey = Survey.objects.get(id__exact=_id)
+        print survey.user == request.user
+        if survey.user == request.user:
+            survey.name = name
+            survey.active = active
+            survey.save()
+            messages.success(request, 'Survey successfully updated.')
+            return HttpResponse(status=200)
 
 @login_required
 def create(request):
