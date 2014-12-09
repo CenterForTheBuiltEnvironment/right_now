@@ -1,4 +1,8 @@
 
+.center-align {
+  text-align: center;
+}
+
 .login-container {
   width: 50%;
   margin: 0 auto;

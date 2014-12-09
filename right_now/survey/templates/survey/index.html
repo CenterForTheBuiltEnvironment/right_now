@@ -8,15 +8,16 @@
 {% endif %}
 
 {% if surveys %}
+
     <table class="table table-hover">
         <thead>
             <tr>
                 <th>Survey</th>
                 <th>Date created</th>
-                <th>Active</th>
-                <th>Report</th>
-                <th>Download</th>
-                <th>Edit</th>
+                <th class="center-align">Active</th>
+                <th class="center-align">Report</th>
+                <th class="center-align">Download</th>
+                <th class="center-align">Edit</th>
             </tr>
         </thead>
         <tbody>
@@ -24,24 +25,24 @@
                 <tr>
                     <td><a href="/survey/{{ survey.url }}/">{{ survey.name }}</a></td>
                     <td>{{ survey.date_created.date }}</td>
-                    <td>
+                    <td class="center-align">
                         {% if survey.active %}
                             <span style="color: green;" class="glyphicon glyphicon-ok"></span>
                         {% else %}
                             <span style="color: red;" class="glyphicon glyphicon-remove"></span>
                         {% endif %}
                     </td>
-                    <td>
+                    <td class="center-align">
                         <a href="/survey/{{ survey.url }}/report">
                             <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
                         </a>
                     </td>
-                    <td>
+                    <td class="center-align">
                         <a href="/survey/{{ survey.url }}/csv">
                             <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
                         </a>
                     </td>
-                    <td>
+                    <td class="center-align">
                         <a class="edit-survey" href="#">
                             <span data-survey-name="{{ survey.name }}" 
                                 data-survey-id="{{ survey.id }}" 
