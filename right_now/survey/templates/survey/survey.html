@@ -75,10 +75,14 @@
           var choice_index = q_dom.children().children('.active').children().attr('data-choice-index');
           var mapped = q.value_map[choice_index];
           var v = mapped;
-          if (v != 'undefined') {
+          if (typeof v != 'undefined') {
             response.value = v;
             payload.push(response);
-          }
+          } else if (q.mandatory) {
+              console.log("Discrete question is mandatory")
+              console.log(q)
+              return; 
+          } 
         } else if (q.qtype=="C"){
           var clicked = q_dom.closest('div.slider').data('clicked');
           if (clicked){
@@ -87,17 +91,30 @@
             v = v * range / 100 + q.value_map[0];
             response.value = v;
             payload.push(response);
+          } else if (q.mandatory) {
+            console.log("Continuous question is mandatory")
+            console.log(q) 
+            return;
           }
         } else if (q.qtype=="T"){
           var c = q_dom.val();
           if (c != ""){
             response.comment = c;
             payload.push(response);
+          } else if (q.mandatory) {
+            console.log("Text question is mandatory")
+            console.log(q)
+            return; 
           }
         } else if (q.qtype=="S"){
           // Special modules
           if (q.name == "SpecialClothingLevel"){
             response.value = get_clo();
+            if ((response.value == 0.2) & (q.mandatory)) { 
+              console.log("Clothing question is mandatory");
+              console.log(q);
+              return;
+            }
             payload.push(response);
           }
         }

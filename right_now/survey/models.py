@@ -24,6 +24,7 @@ class Question(models.Model):
     value_map = JSONField(blank=True)
     module = models.ForeignKey('Module')
     order = models.IntegerField(default=1)
+    mandatory = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.name

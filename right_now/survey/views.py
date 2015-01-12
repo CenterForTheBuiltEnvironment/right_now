@@ -132,7 +132,7 @@ def survey(request, survey_url):
     questions_json = []
     for m in modules:
         for q in m['questions']:
-            keys= ['id', 'text', 'name', 'choices', 'value_map', 'qtype']
+            keys= ['id', 'text', 'name', 'choices', 'value_map', 'qtype', 'mandatory']
             obj = {k: getattr(q, k) for k in keys}
             questions_json.append(obj)
 
