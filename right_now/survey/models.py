@@ -25,7 +25,7 @@ class Question(models.Model):
     value_map = JSONField(blank=True)
     module = models.ForeignKey('Module')
     order = models.IntegerField(default=1)
-    mandatory = models.BooleanField(default=False)
+    mandatory = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.name
@@ -49,12 +49,12 @@ class Sstring(models.Model):     # convet the multiple choice answer to be strin
     survey = models.ForeignKey('Survey')
     question = models.ForeignKey('Question')
     subject_id = models.CharField(max_length=50)
-    convertresult =models.CommaSeparatedIntegerField(max_length=200)   #check out how to use this
+    convertresult =models.CharField(max_length=200)
 
- #   def setstring(self, x):
- #       self.convertresult =json.dumps(x)
- #   def getstring(self, x):
- #     return json.loads(self.convertresult)
+    def setstring(self, x):
+        self.foo =json.dumps(x)
+    def getstring(self, x):
+      return json.loads(self.convertresult)
 
 class Survey(models.Model):
     date_created = models.DateTimeField('Date created', auto_now_add=True)
