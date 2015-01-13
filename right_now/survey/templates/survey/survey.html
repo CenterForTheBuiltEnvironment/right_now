@@ -23,9 +23,9 @@
       <div class 'multiple' id="question-{{ q.id }}-multiple">
         <div class='checkbox-group'>
           {% for c in q.choices %}
-          <lable class='check-box'>
-          <input type="checkbox" name="choiceofcheck" id='{{ q.name }}-{{ forloop.counter0 }}-checkbox'>{{ c }}<br /> 
-          </lable>
+          <label class='check-box'>
+          <input type="checkbox" name="choiceofcheck" id='{{ q.name }}-{{ forloop.counter0 }}-checkbox' data-choice-index='{{forloop.counter0}}'>{{ c }}<br /> 
+          </label>
            {% endfor %}
         </div> 
       </div>
@@ -117,20 +117,21 @@
             return;
           }
         } else if (q.qtype=="M"){
-           var choiceno =q_dom.choices;   //How shall I get the choice length?
-           var choicearray = [];
-           for(var j=0; j<c.length; j++){
-           var the_choice_index = q_dom.children().children('.active').children().attr('data-choice-index');
-           var mappedvalue = q.value_map[the_choice_index];
-           choicearray.push(mappedvalue);
-           }
+            var choicearray = [];
+            var checkboxes = q_dom.find('.checkbox-group').children().children('input:checked')
+            checkboxes.each(function(i, obj) { 
+            var choice_index = $(obj).attr('data-choice-index');
+            var v = q.value_map[choice_index];
+            choicearray.push(v);
+            });
            if(choicearray.length !=0){
-           response.Sstring= choicearray;             //create a filedtype to pass the data
-           payload.push(response);
-         } else if (q.mandatory) {
-           console.log("multiple choice question is mandatory")
-           console.log(q.text) 
-           return;}
+             response.Sstring = choicearray.join(','); //create a filedtype to pass the data
+             payload.push(response);
+           } else if (q.mandatory) {
+             console.log("multiple choice question is mandatory")
+             console.log(q.text) 
+             return;
+           }
         }else if (q.qtype=="T"){
           var c = q_dom.val();
           if (c != ""){
@@ -154,6 +155,7 @@
           }
         }
       } 
+      console.log(payload)
       $.ajax({
         url: "/survey/" + survey_url + "/submit/",
         type: "POST",
