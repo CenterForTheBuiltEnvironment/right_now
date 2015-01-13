@@ -7,6 +7,7 @@ QUESTION_TYPES = (
     ('D', 'Discrete'),
     ('T', 'Text'),
     ('S', 'Special'),
+    ('M', 'Multiple'),
 )
 
 class Module(models.Model):
@@ -42,6 +43,18 @@ class Comment(models.Model):
     question = models.ForeignKey('Question')
     subject_id = models.CharField(max_length=50)
     comment = models.TextField()
+
+class Sstring(models.Model):     # convet the multiple choice answer to be string
+    datetime = models.DateTimeField('Datetime of response')
+    survey = models.ForeignKey('Survey')
+    question = models.ForeignKey('Question')
+    subject_id = models.CharField(max_length=50)
+    convertresult =models.CharField(max_length=200)
+
+    def setstring(self, x):
+        self.foo =json.dumps(x)
+    def getstring(self, x):
+      return json.loads(self.convertresult)
 
 class Survey(models.Model):
     date_created = models.DateTimeField('Date created', auto_now_add=True)
