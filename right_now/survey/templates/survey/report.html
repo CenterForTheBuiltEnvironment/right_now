@@ -14,9 +14,9 @@
     var list = $('#report-qlist');
 
     questions = _.map(questions, function(q){
-      q.choices = eval(q.choices);
-      q.value_map = eval(q.value_map);
-      return q;
+      q.question.choices = eval(q.question.choices);
+      q.question.value_map = eval(q.question.value_map);
+      return q.question;
     });
 
     _.each(questions, renderChart);
@@ -136,7 +136,7 @@
       table.append('<thead><tr><th>Mean</th><th>Median</th><th>Count</th></tr></thead>');
       table.append('<tbody>');
       table.append('<tr><td>' + mean.toFixed(2) + '</td><td>' + median.toFixed(2) + '</td><td>' + N + '</td></tr></tbody>');
-
+ 
     }
 
     function renderDiscreteReport(q){

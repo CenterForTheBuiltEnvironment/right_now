@@ -114,19 +114,13 @@ def create(request):
 
         messages.success(request, 'New survey successfully created.')
         return HttpResponseRedirect('/survey/')
-        
+
     else:
         questions = Question.objects.all()
         ctx = {'questions': questions}
         return render(request, 'survey/create.html', ctx)
 
-def survey(request, survey_url):
-    if request.session['workstation'] is None:
-        return HttpResponseRedirect('/survey/' + survey_url)
-    survey = get_object_or_404(Survey, url=survey_url) 
-    survey_questions = SurveyQuestion.objects.filter(survey_id=survey.id) \
-                       .order_by('order').select_related('question')
-
+def serialize_survey_questions(survey_questions):
     questions_json = []
     for q in survey_questions:
 
@@ -136,7 +130,16 @@ def survey(request, survey_url):
         obj['question'] = {k: getattr(obj['question'], k) for k in qkeys}
         questions_json.append(obj)
 
-    questions_json = json.dumps(questions_json)
+    return json.dumps(questions_json)
+
+def survey(request, survey_url):
+    if request.session['workstation'] is None:
+        return HttpResponseRedirect('/survey/' + survey_url)
+    survey = get_object_or_404(Survey, url=survey_url) 
+    survey_questions = SurveyQuestion.objects.filter(survey_id=survey.id) \
+                       .order_by('order').select_related('question')
+
+    questions_json = serialize_survey_questions(survey_questions)
     ctx = { 
         'survey': survey, 
         'questions': survey_questions,
@@ -177,30 +180,30 @@ def thanks(request, survey_url):
 @login_required
 def report(request, survey_url):
     survey = get_object_or_404(Survey, url=survey_url)
-    questions = []
-    for m in survey.modules.all():
-        questions += Question.objects.filter(module=m)
+    survey_questions = SurveyQuestion.objects.filter(survey_id=survey.id) \
+                       .order_by('order').select_related('question')
 
-    keys = ['id', 'name', 'text', 'qtype', 'choices', 'value_map']
-    questions_json = []
-    for q in questions:
-        questions_json.append({ k: q.__dict__.get(k) for k in keys })
+    questions_json = serialize_survey_questions(survey_questions)
+
+    # Numerical data
     data = Data.objects.filter(survey=survey)
     data_json = []
-
     keys = ['question_id','value']
     for d in data:
         data_json.append({ k: float(d.__dict__.get(k)) for k in keys })
+
+    # Comments
     comments = Comment.objects.filter(survey=survey)
     comments_json = []
-
-    keys = ['question_id', 'subject_id', 'comment']
+    keys = ['question_id', 'comment']
     for c in comments: 
       comments_json.append({ k: c.__dict__.get(k) for k in keys })
+
     ctx = { 'survey': survey, 
             'data': json.dumps(data_json), 
-            'questions': json.dumps(questions_json), 
-            'comments': json.dumps(comments_json) }
+            'questions': questions_json, 
+            'comments': json.dumps(comments_json)
+    }
     return render(request, 'survey/report.html', ctx)
 
 @login_required

@@ -7,7 +7,8 @@
   <li><p class="question-text">{{ q.question.text }}</p></li>
   {% if q.question.qtype == "C" %}
     <div class='slider-container' id="question-{{ q.question.id }}-container">
-      <input type="text" id="question-{{ q.question.id }}" class="slider" data-slider-min="0" data-slider-max="100"> 
+      <input type="text" id="question-{{ q.question.id }}" 
+        class="slider" data-slider-min="0" data-slider-max="100"> 
     </div>
   {% elif q.question.qtype == "D" %}
     <div id="question-{{ q.question.id }}-container">
@@ -29,16 +30,17 @@
       <textarea id="question-{{ q.question.id }}"class="form-control" rows="3"></textarea>
     </div>
   {% endif %}
-{% endfor %}
 
-<!--Special Modules-->
-{% if m.name == "SpecialClothingModule" %}
-  {% for q in m.questions %}
+  <!--Special Questions-->
+  {% if q.question.name == "SpecialClothingLevel" %}
     <div id="question-{{ q.id }}-container">
       {% include "survey/clothing.html" %}
     </div>
-  {% endfor %}
-{% endif %}
+  {% endif %}
+  
+{% endfor %}
+
+
 
   <div id='submit-container' style="margin: 0 auto; width: 50%; padding: 20px; text-align: center;">
     <button id='submit' class='btn btn-success btn-lg'>Submit</button> 
