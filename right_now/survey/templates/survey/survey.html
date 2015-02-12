@@ -2,45 +2,43 @@
 {% block content %}
 
 <ol>
-{% for m in modules %}
-  {% for q in m.questions %}
-    <li><p class="question-text">{{ q.text }}</p></li>
-    {% if q.qtype == "C" %}
-      <div class='slider-container' id="question-{{ q.id }}-container">
-        <input type="text" id="question-{{ q.id }}" class="slider" data-slider-min="0" data-slider-max="100"> 
-      </div>
-    {% elif q.qtype == "D" %}
-      <div id="question-{{ q.id }}-container">
-        <div class='discrete' id="question-{{ q.id }}">
-          <div class='btn-group' data-toggle="buttons">  
-            {% for c in q.choices %}
-            <label class='btn btn-default'>
-              <input type='radio' 
-                data-choice-index={{ forloop.counter0 }} 
-                id='{{ q.name }}-{{ forloop.counter0 }}' 
-                name='radio'>{{ c }}
-            </label>
-            {% endfor %}
-          </div>
+
+{% for q in questions %}
+  <li><p class="question-text">{{ q.question.text }}</p></li>
+  {% if q.question.qtype == "C" %}
+    <div class='slider-container' id="question-{{ q.question.id }}-container">
+      <input type="text" id="question-{{ q.question.id }}" class="slider" data-slider-min="0" data-slider-max="100"> 
+    </div>
+  {% elif q.question.qtype == "D" %}
+    <div id="question-{{ q.question.id }}-container">
+      <div class='discrete' id="question-{{ q.question.id }}">
+        <div class='btn-group' data-toggle="buttons">  
+          {% for c in q.question.choices %}
+          <label class='btn btn-default'>
+            <input type='radio' 
+              data-choice-index={{ forloop.counter0 }} 
+              id='{{ q.question.name }}-{{ forloop.counter0 }}' 
+              name='radio'>{{ c }}
+          </label>
+          {% endfor %}
         </div>
       </div>
-    {% elif q.qtype == "T" %}
-      <div class='text-input-container' id="question-{{ q.id }}-container">
-        <textarea id="question-{{ q.id }}"class="form-control" rows="3"></textarea>
-      </div>
-    {% endif %}
-  {% endfor %}
-
-  <!--Special Modules-->
-  {% if m.name == "SpecialClothingModule" %}
-    {% for q in m.questions %}
-      <div id="question-{{ q.id }}-container">
-        {% include "survey/clothing.html" %}
-      </div>
-    {% endfor %}
+    </div>
+  {% elif q.question.qtype == "T" %}
+    <div class='text-input-container' id="question-{{ q.question.id }}-container">
+      <textarea id="question-{{ q.question.id }}"class="form-control" rows="3"></textarea>
+    </div>
   {% endif %}
-
 {% endfor %}
+
+<!--Special Modules-->
+{% if m.name == "SpecialClothingModule" %}
+  {% for q in m.questions %}
+    <div id="question-{{ q.id }}-container">
+      {% include "survey/clothing.html" %}
+    </div>
+  {% endfor %}
+{% endif %}
 
   <div id='submit-container' style="margin: 0 auto; width: 50%; padding: 20px; text-align: center;">
     <button id='submit' class='btn btn-success btn-lg'>Submit</button> 
@@ -80,32 +78,33 @@
       var complete = true;
       for (var i = 0; i < N; i++){
         var q = questions[i];
-        var q_dom = $('#question-' + q.id);
-        var response = { 'survey': survey, 'question': q.id };
-        if (q.qtype=="D"){
-          var choice_index = q_dom.children().children('.active').children().attr('data-choice-index');
-          var mapped = q.value_map[choice_index];
+        var q_dom = $('#question-' + q.question.id);
+        var response = { 'survey': survey, 'question': q.question.id };
+        if (q.question.qtype=="D"){
+          var choice_index = q_dom.children().children('.active')
+                                  .children().attr('data-choice-index');
+          var mapped = q.question.value_map[choice_index];
           var v = mapped;
           if (typeof v != 'undefined') {
             response.value = v;
             payload.push(response);
-          } else if (q.mandatory) {
+          } else if (q.question.mandatory) {
             unanswered_questions.push(q);
             complete = false;
           } 
-        } else if (q.qtype=="C"){
+        } else if (q.question.qtype=="C"){
           var clicked = q_dom.closest('div.slider').data('clicked');
           if (clicked){
             var v = q_dom.data('slider').getValue()
-            var range = q.value_map[1] - q.value_map[0];
-            v = v * range / 100 + q.value_map[0];
+            var range = q.question.value_map[1] - q.question.value_map[0];
+            v = v * range / 100 + q.question.value_map[0];
             response.value = v;
             payload.push(response);
           } else if (q.mandatory) {
             unanswered_questions.push(q);
             complete = false;
           }
-        }else if (q.qtype=="T"){
+        }else if (q.question.qtype=="T"){
           var c = q_dom.val();
           if (c != ""){
             response.comment = c;
@@ -131,7 +130,9 @@
           url: "/survey/" + survey_url + "/submit/",
           type: "POST",
           data: JSON.stringify(payload, null, 2),
-          success: function(){ window.location.href = "/survey/" + survey_url + "/thanks/"; },
+          success: function(){
+            window.location.href = "/survey/" + survey_url + "/thanks/";
+          },
         });
       } else {
         $('div').removeClass('unanswered');
@@ -157,17 +158,18 @@
       var tick_width = 1;
       for (var i = 0; i < N; i++){
         var q = questions[i];
-        if (q.qtype=="C"){
-          var M = q.choices.length;
-          var container = $('#question-' + q.id + '-container');
-          var ticks_container = $("<div class='ticks-container' id='ticks-" + q.id + "-container'></div>")
-            .appendTo(container);
-          var labels_container = $("<div class='labels-container' id='labels-" + q.id + "-container'></div>")
-            .appendTo(container);
+        if (q.question.qtype=="C"){
+          var M = q.question.choices.length;
+          var container = $('#question-' + q.question.id + '-container');
+          var ticks_container = $("<div class='ticks-container' id='ticks-" 
+            + q.question.id + "-container'></div>").appendTo(container);
+          var labels_container = $("<div class='labels-container' id='labels-" 
+            + q.question.id + "-container'></div>").appendTo(container);
           var tick_margin = parseInt(L / (M - 1) - tick_width);
-          var remainder = L - (parseInt(tick_margin) + tick_width) * (q.choices.length - 1);
+          var remainder = L - (parseInt(tick_margin) + tick_width) * (q.question.choices.length - 1);
           var label_width = 58;
-          var label_margin = (408 - 58 * M) / (M - 1);
+          var label_margin = (408 - label_width * M) / (M - 1);
+
           // ticks
           $('<div class="tick"></div>').appendTo(ticks_container);
           for (var j = 1; j < M - 1; j++){
@@ -181,11 +183,11 @@
  
           // labels
           for (var j = 0; j < M - 1; j++){
-            $('<div class="mylabel"><p class="p-label">' + q.choices[j] + '</p></div>')
+            $('<div class="mylabel"><p class="p-label">' + q.question.choices[j] + '</p></div>')
               .appendTo(labels_container)
               .css('margin-right', label_margin);
           }
-          $('<div class="mylabel"><p class="p-label">' + q.choices[j] + '</p></div>')
+          $('<div class="mylabel"><p class="p-label">' + q.question.choices[j] + '</p></div>')
             .appendTo(labels_container);
           $('.label').css('width', label_width);
         }

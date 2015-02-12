@@ -3,8 +3,6 @@ import datetime
 import pytz
 import csv
 import unicodedata
-import random
-import string
 from decimal import *
 
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -18,19 +16,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from survey.models import Survey, Question, Data, Comment, Module
-
-def get_survey_url():
-    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
+from survey.models import Survey, SurveyQuestion, Question, Data, Comment, Module, get_survey_url
 
 @login_required
 def index(request):
     surveys = Survey.objects.filter(user=request.user.id)
     template = loader.get_template('survey/index.html')
-    modules = Module.objects.all()
     context = RequestContext(request, {
         'surveys': surveys,
-        'modules': modules,
     })
     return HttpResponse(template.render(context))
 
@@ -84,7 +77,11 @@ def signup(request):
 @ensure_csrf_cookie
 def welcome(request, survey_url):
     survey = Survey.objects.get(url__exact=survey_url)
-    ctx = { 'workstation': request.session.get('workstation'), 'survey_url': survey_url, 'active': survey.active }
+    ctx = {
+        'workstation': request.session.get('workstation'), 
+        'survey_url': survey_url, 
+        'active': survey.active
+    }
     return render(request, 'survey/welcome.html', ctx)
 
 @login_required
@@ -95,7 +92,6 @@ def edit(request):
         name = params['name']
         active = params['active']
         survey = Survey.objects.get(id__exact=_id)
-        print survey.user == request.user
         if survey.user == request.user:
             survey.name = name
             survey.active = active
@@ -110,34 +106,42 @@ def create(request):
         user = User.objects.get(id__exact=request.user.id)
         s = Survey(name=name, user=user, url=get_survey_url())
         s.save()
-        modules = Module.objects.filter(id__in=request.POST.getlist('modules'))
-        for m in modules:
-            s.modules.add(m)
+
+        questions = Question.objects.filter(id__in=request.POST.getlist('questions'))
+        for q in questions:
+            sq = SurveyQuestion(survey=s, question=q, mandatory=False, order=1)
+            sq.save()
+
         messages.success(request, 'New survey successfully created.')
         return HttpResponseRedirect('/survey/')
+        
     else:
-        modules = Module.objects.all()
-        ctx = {'modules': modules}
+        questions = Question.objects.all()
+        ctx = {'questions': questions}
         return render(request, 'survey/create.html', ctx)
 
 def survey(request, survey_url):
     if request.session['workstation'] is None:
         return HttpResponseRedirect('/survey/' + survey_url)
     survey = get_object_or_404(Survey, url=survey_url) 
-    modules = []
-    for m in survey.modules.all():
-        questions = Question.objects.filter(module=m.id).order_by('order')
-        modules.append({'name': m.name, 'questions': questions})
-        
+    survey_questions = SurveyQuestion.objects.filter(survey_id=survey.id) \
+                       .order_by('order').select_related('question')
+
     questions_json = []
-    for m in modules:
-        for q in m['questions']:
-            keys= ['id', 'text', 'name', 'choices', 'value_map', 'qtype', 'mandatory']
-            obj = {k: getattr(q, k) for k in keys}
-            questions_json.append(obj)
+    for q in survey_questions:
+
+        keys = ['id', 'order', 'mandatory', 'question']
+        qkeys = ['id', 'qtype', 'choices', 'text', 'value_map']
+        obj = {k: getattr(q, k) for k in keys}
+        obj['question'] = {k: getattr(obj['question'], k) for k in qkeys}
+        questions_json.append(obj)
 
     questions_json = json.dumps(questions_json)
-    ctx = { 'survey': survey, 'modules': modules, 'json': questions_json }
+    ctx = { 
+        'survey': survey, 
+        'questions': survey_questions,
+        'json': questions_json
+    }
     return render(request, 'survey/survey.html', ctx)
 
 @require_POST
@@ -158,10 +162,12 @@ def submit(request, survey_url):
         q = Question.objects.get(id=r['question'])
         s = Survey.objects.get(id=r['survey'])
         if 'value' in r:
-            data = Data(datetime=now, survey=s, question=q, subject_id=workstation, value=Decimal(r['value']))
+            data = Data(datetime=now, survey=s, question=q, 
+                        subject_id=workstation, value=Decimal(r['value']))
             data.save()
         elif 'comment' in r:
-            comment = Comment(datetime=now, survey=s, question=q, subject_id=workstation, comment=r['comment'])
+            comment = Comment(datetime=now, survey=s, question=q, 
+                              subject_id=workstation, comment=r['comment'])
             comment.save()
     return HttpResponse(200)
 
