@@ -78,9 +78,8 @@ def signup(request):
 def welcome(request, survey_url):
     survey = Survey.objects.get(url__exact=survey_url)
     ctx = {
+        'survey': survey,
         'workstation': request.session.get('workstation'), 
-        'survey_url': survey_url, 
-        'active': survey.active
     }
     return render(request, 'survey/welcome.html', ctx)
 
