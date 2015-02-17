@@ -17,7 +17,8 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.forms.models import modelform_factory, inlineformset_factory
 
-from survey.models import Survey, SurveyQuestion, Question, Data, Comment, Module, get_survey_url
+from survey.models import Survey, SurveyQuestion, Question, Data, \
+ Comment, Module, get_survey_url, SurveyForm
 
 @login_required
 def index(request):
@@ -101,7 +102,6 @@ def edit(request):
 
 @login_required
 def create(request):
-    SurveyForm = modelform_factory(Survey, exclude=['url', 'user', 'questions'])
     SurveyQuestionFormset = inlineformset_factory(Survey, SurveyQuestion, exclude=['survey', '_id'])
     if request.POST:
         survey_form = SurveyForm(request.POST)
