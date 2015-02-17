@@ -1,7 +1,7 @@
 {% extends "survey/layout.html" %}
 {% block content %}
     <div style="margin-bottom: 10px; margin-top: 10px;">
-        <form action="/survey/create/" method="post" role="form">
+        <form action="" method="post" role="form">
             {% csrf_token %}
             <table class="table">
                 {{ survey_form.as_table }}
@@ -9,16 +9,18 @@
             <table class="table table-striped" id="sq_table">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Question</th>
                         <th>Mandatory</th>
                         <th>Order</th>
+                        <th></th>
                         <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for sq_form in survey_question_formset %}
                         <tr>
-                        {% for element in sq_form.visible_fields %}
+                        {% for element in sq_form %}
                             <td>
                                 {{ element }}
                             </td>

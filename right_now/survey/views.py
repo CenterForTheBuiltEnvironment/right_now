@@ -8,7 +8,7 @@ from decimal import *
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.core.context_processors import csrf
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.template import RequestContext, loader
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -86,42 +86,37 @@ def welcome(request, survey_url):
     return render(request, 'survey/welcome.html', ctx)
 
 @login_required
-def edit(request):
-    if request.POST:
-        params = json.loads(request.body)
-        _id = params['id']
-        name = params['name']
-        active = params['active']
-        survey = Survey.objects.get(id__exact=_id)
-        if survey.user == request.user:
-            survey.name = name
-            survey.active = active
-            survey.save()
-            messages.success(request, 'Survey successfully updated.')
-            return HttpResponse(status=200)
+def create(request, survey_id=None):
+    SurveyQuestionFormset = inlineformset_factory(Survey, SurveyQuestion)
+    if survey_id is not None:
+        survey = get_object_or_404(Survey, id__exact=int(survey_id))
+        if survey.user != request.user:
+            return HttpResponseForbidden()
+    else:
+        survey = None
 
-@login_required
-def create(request):
-    SurveyQuestionFormset = inlineformset_factory(Survey, SurveyQuestion, exclude=['survey', '_id'])
     if request.POST:
-        survey_form = SurveyForm(request.POST)
+        survey_form = SurveyForm(request.POST, instance=survey)
         survey_instance = survey_form.save(commit=False)
         survey_instance.user_id = request.user.id
         survey_instance.save()
 
-        survey_question_formset = SurveyQuestionFormset(request.POST)
-        if survey_question_formset.is_valid():
-            survey_question_instance = survey_question_formset.save(commit=False)
-            for sqi in survey_question_instance:
-                sqi.survey_id = survey_instance.id
-                sqi.save()
+        survey_question_formset = SurveyQuestionFormset(request.POST, instance=survey)
+        survey_question_instance = survey_question_formset.save(commit=False)
+        for sqi in survey_question_instance:
+            sqi.survey_id = survey_instance.id
+            sqi.save()
 
-        messages.success(request, 'New survey successfully created.')
+        if survey_id is None:
+            messages.success(request, 'New survey successfully created.')
+        else:
+            messages.success(request, 'Survey successfully updated.')
+
         return HttpResponseRedirect('/survey/')
 
     else:
-        survey_form = SurveyForm()
-        survey_question_formset = SurveyQuestionFormset()
+        survey_form = SurveyForm(instance=survey)
+        survey_question_formset = SurveyQuestionFormset(instance=survey)
         ctx = {
             'survey_form': survey_form,
             'survey_question_formset': survey_question_formset
@@ -131,7 +126,6 @@ def create(request):
 def serialize_survey_questions(survey_questions):
     questions_json = []
     for q in survey_questions:
-
         keys = ['id', 'order', 'mandatory', 'question']
         qkeys = ['id', 'qtype', 'choices', 'text', 'value_map']
         obj = {k: getattr(q, k) for k in keys}
@@ -190,7 +184,6 @@ def report(request, survey_url):
     survey = get_object_or_404(Survey, url=survey_url)
     survey_questions = SurveyQuestion.objects.filter(survey_id=survey.id) \
                        .order_by('order').select_related('question')
-
     questions_json = serialize_survey_questions(survey_questions)
 
     # Numerical data

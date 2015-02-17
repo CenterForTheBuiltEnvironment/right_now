@@ -111,7 +111,6 @@ assess your indoor environment. Start by entering your workstation or room numbe
 class SurveyForm(ModelForm):
     class Meta:
         model = Survey
-        fields = '__all__'
         exclude = ['url', 'user', 'questions']
         widgets = {
             'headline_text': Textarea(attrs={'cols': 80, 'rows': 1}),
