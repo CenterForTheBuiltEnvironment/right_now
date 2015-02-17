@@ -102,10 +102,11 @@ def create(request, survey_id=None):
         survey_instance.save()
 
         survey_question_formset = SurveyQuestionFormset(request.POST, instance=survey)
-        survey_question_instance = survey_question_formset.save(commit=False)
-        for sqi in survey_question_instance:
-            sqi.survey_id = survey_instance.id
-            sqi.save()
+        if survey_question_formset.is_valid():
+            survey_question_instance = survey_question_formset.save(commit=False)
+            for sqi in survey_question_instance:
+                sqi.survey_id = survey_instance.id
+                sqi.save()
 
         if survey_id is None:
             messages.success(request, 'New survey successfully created.')
@@ -122,6 +123,15 @@ def create(request, survey_id=None):
             'survey_question_formset': survey_question_formset
         }
         return render(request, 'survey/create.html', ctx)
+
+@login_required
+def questions(request):
+    questions = Question.objects.all()
+    ctx = {
+        'questions': questions,
+    }
+    return render(request, 'survey/questions.html', ctx)
+
 
 def serialize_survey_questions(survey_questions):
     questions_json = []
