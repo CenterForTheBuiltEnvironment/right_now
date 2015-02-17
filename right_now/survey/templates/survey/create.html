@@ -43,7 +43,11 @@
         var re = new RegExp(find, 'g');
 
         $('#add_row').click(function(){
-            var myrow = "<tr>" + row.html().replace(re, i) + "</tr>";
+            var total_forms = $('#id_surveyquestion_set-TOTAL_FORMS');
+            var nforms = parseFloat(total_forms.val()) + 1;
+            total_forms.val(nforms);
+
+            var myrow = "<tr>" + row.html().replace(re, 'set-' + i) + "</tr>";
             console.log(myrow);
             myrow = $(myrow).wrap('<tr></tr>');
             console.log(myrow);
