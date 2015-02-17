@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.forms.models import modelform_factory, inlineformset_factory
 
 from survey.models import Survey, SurveyQuestion, Question, Data, Comment, Module, get_survey_url
 
@@ -100,23 +101,31 @@ def edit(request):
 
 @login_required
 def create(request):
+    SurveyForm = modelform_factory(Survey, exclude=['url', 'user', 'questions'])
+    SurveyQuestionFormset = inlineformset_factory(Survey, SurveyQuestion, exclude=['survey', '_id'])
     if request.POST:
-        name = request.POST['survey-name']
-        user = User.objects.get(id__exact=request.user.id)
-        s = Survey(name=name, user=user, url=get_survey_url())
-        s.save()
+        survey_form = SurveyForm(request.POST)
+        survey_instance = survey_form.save(commit=False)
+        survey_instance.user_id = request.user.id
+        survey_instance.save()
 
-        questions = Question.objects.filter(id__in=request.POST.getlist('questions'))
-        for q in questions:
-            sq = SurveyQuestion(survey=s, question=q, mandatory=False, order=1)
-            sq.save()
+        survey_question_formset = SurveyQuestionFormset(request.POST)
+        if survey_question_formset.is_valid():
+            survey_question_instance = survey_question_formset.save(commit=False)
+            for sqi in survey_question_instance:
+                sqi.survey_id = survey_instance.id
+                sqi.save()
 
         messages.success(request, 'New survey successfully created.')
         return HttpResponseRedirect('/survey/')
 
     else:
-        questions = Question.objects.all()
-        ctx = {'questions': questions}
+        survey_form = SurveyForm()
+        survey_question_formset = SurveyQuestionFormset()
+        ctx = {
+            'survey_form': survey_form,
+            'survey_question_formset': survey_question_formset
+        }
         return render(request, 'survey/create.html', ctx)
 
 def serialize_survey_questions(survey_questions):
