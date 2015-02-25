@@ -25,7 +25,7 @@ class Question(models.Model):
     value_map = JSONField(blank=True)
     module = models.ForeignKey('Module')
     order = models.IntegerField(default=1)
-    mandatory = models.BooleanField(default=True)
+    mandatory = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name
@@ -37,24 +37,19 @@ class Data(models.Model):
     subject_id = models.CharField(max_length=50)
     value = models.DecimalField(max_digits=9, decimal_places=2)
 
+class Multidata(models.Model):
+    datetime = models.DateTimeField('Datetime of response')
+    survey = models.ForeignKey('Survey')
+    question = models.ForeignKey('Question')
+    subject_id = models.CharField(max_length=50)
+    multivalue = models.CommaSeparatedIntegerField(max_length=9)
+
 class Comment(models.Model):
     datetime = models.DateTimeField('Datetime of response')
     survey = models.ForeignKey('Survey')
     question = models.ForeignKey('Question')
     subject_id = models.CharField(max_length=50)
     comment = models.TextField()
-
-class Sstring(models.Model):     # convet the multiple choice answer to be string
-    datetime = models.DateTimeField('Datetime of response')
-    survey = models.ForeignKey('Survey')
-    question = models.ForeignKey('Question')
-    subject_id = models.CharField(max_length=50)
-    convertresult =models.CharField(max_length=200)
-
-    def setstring(self, x):
-        self.foo =json.dumps(x)
-    def getstring(self, x):
-      return json.loads(self.convertresult)
 
 class Survey(models.Model):
     date_created = models.DateTimeField('Date created', auto_now_add=True)

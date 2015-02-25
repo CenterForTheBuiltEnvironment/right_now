@@ -20,14 +20,14 @@
         </div>
       </div>
     {% elif q.qtype == "M" %}
-      <div class 'multiple' id="question-{{ q.id }}-multiple">
+      <div class 'multiple' id="question-{{ q.id }}">
         <div class='checkbox-group'>
           {% for c in q.choices %}
-          <lable class='check-box'>
-          <input type="checkbox" name="choiceofcheck" id='{{ q.name }}-{{ forloop.counter0 }}-checkbox'>{{ c }}<br /> 
-          </lable>
-           {% endfor %}
-        </div> 
+          <label class='check-box'>
+          <input type='checkbox' data-choice-index={{ forloop.counter0 }} name='choiceofcheck' id='{{ q.name }}-{{ forloop.counter0 }}-checkbox'>{{ c }}
+          </label><br/>
+          {% endfor %}
+        </div>
       </div>
     {% elif q.qtype == "T" %}
       <div class='text-input-container'>
@@ -63,16 +63,6 @@
       'value': 50,
     });
 
-    // define how the sliders look based on the data in 'questions'
-    for (var i = 0; i < questions.length; i++){
-      var q = questions[i];
-      if (q.qtype == 'C'){ 
-        // get the corresponding slider
-        var slider = $('#question-' + q.id + '-container').find('.slider-track');
-        slider.css('background', 'red')
-      }
-    }
-    
     $('.slider-handle.round')
       .css('background-image', 'linear-gradient(to bottom, #c0c0c0, #555555)');
 
@@ -117,21 +107,22 @@
             return;
           }
         } else if (q.qtype=="M"){
-           var choiceno =q_dom.choices;   //How shall I get the choice length?
-           var choicearray = [];
-           for(var j=0; j<c.length; j++){
-           var the_choice_index = q_dom.children().children('.active').children().attr('data-choice-index');
-           var mappedvalue = q.value_map[the_choice_index];
-           choicearray.push(mappedvalue);
-           }
-           if(choicearray.length !=0){
-           response.Sstring= choicearray;             //create a filedtype to pass the data
-           payload.push(response);
-         } else if (q.mandatory) {
-           console.log("multiple choice question is mandatory")
-           console.log(q.text) 
-           return;}
-        }else if (q.qtype=="T"){
+          var choicearray = [];
+          var checkboxs = q_dom.find('.checkbox-group').children().children('input:checked');
+          checkboxs.each(function(i, obj){
+            var choice_index = $(obj).attr('data-choice-index');
+            var v = q.value_map[choice_index];
+            choicearray.push(v);
+          });
+          if(choicearray.length !=0){
+            response.multivalue = choicearray.join(','); 
+            payload.push(response);
+          } else if (q.mandatory) {
+            console.log("multiple choice question is mandatory")
+            console.log(q.text) 
+            return;
+          }
+        } else if (q.qtype=="T"){
           var c = q_dom.val();
           if (c != ""){
             response.comment = c;

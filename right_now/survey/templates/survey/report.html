@@ -28,6 +28,8 @@
         renderContinuousReport(q);
       } else if (q.qtype == "T"){
         renderComments(q);
+      } else if (q.qtype == "M"){
+        renderMultipleReport(q);
       }
     }
 
@@ -137,6 +139,13 @@
       table.append('<tbody>');
       table.append('<tr><td>' + mean.toFixed(2) + '</td><td>' + median.toFixed(2) + '</td><td>' + N + '</td></tr></tbody>');
 
+    }
+
+    function renderMultipleReport(q){
+      var div = $("<div class='question-report-container' id='report-" + q.id + "-container'></div>").appendTo(list);
+      div.append("<li><p class='question-text'>" + q.text + "</p></li>");
+
+      var qdata = _.filter(data, function(d){ return d.question_id == q.id; });
     }
 
     function renderDiscreteReport(q){

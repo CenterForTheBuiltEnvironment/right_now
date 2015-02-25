@@ -103,7 +103,7 @@
         window.location.href = '/survey/create/';
     });
 
-    $('.edit-survey').click(function(){
+    $('.edit-survey').click(function(event){
         var survey_id = $(event.target).data('survey-id');
         var survey_name = $(event.target).data('survey-name');
         var survey_active = ($(event.target).data('survey-active').toLowerCase() === "true");

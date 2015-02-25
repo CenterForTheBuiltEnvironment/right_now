@@ -160,6 +160,9 @@ def submit(request, survey_url):
         if 'value' in r:
             data = Data(datetime=now, survey=s, question=q, subject_id=workstation, value=Decimal(r['value']))
             data.save()
+        elif 'multivalue' in r:
+            multidata = Multidata(datetime=now, survey=s, question=q, subject_id=workstation, multivalue=string(r['multivalue']))
+            multidata.save()
         elif 'comment' in r:
             comment = Comment(datetime=now, survey=s, question=q, subject_id=workstation, comment=r['comment'])
             comment.save()
@@ -187,7 +190,7 @@ def report(request, survey_url):
         data_json.append({ k: float(d.__dict__.get(k)) for k in keys })
     comments = Comment.objects.filter(survey=survey)
     comments_json = []
-
+ 
     keys = ['question_id', 'subject_id', 'comment']
     for c in comments: 
       comments_json.append({ k: c.__dict__.get(k) for k in keys })
