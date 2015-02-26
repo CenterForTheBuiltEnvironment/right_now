@@ -18,7 +18,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from survey.models import Survey, Question, Data, Comment, Module
+from survey.models import Survey, Question, Data, Multidata, Comment, Module
 
 def get_survey_url():
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
@@ -161,7 +161,7 @@ def submit(request, survey_url):
             data = Data(datetime=now, survey=s, question=q, subject_id=workstation, value=Decimal(r['value']))
             data.save()
         elif 'multivalue' in r:
-            multidata = Multidata(datetime=now, survey=s, question=q, subject_id=workstation, multivalue=string(r['multivalue']))
+            multidata = Multidata(datetime=now, survey=s, question=q, subject_id=workstation, multivalue=r['multivalue'])
             multidata.save()
         elif 'comment' in r:
             comment = Comment(datetime=now, survey=s, question=q, subject_id=workstation, comment=r['comment'])
@@ -188,6 +188,12 @@ def report(request, survey_url):
     keys = ['question_id','value']
     for d in data:
         data_json.append({ k: float(d.__dict__.get(k)) for k in keys })
+    multidata = Multidata.objects.filter(survey=survey)
+    multidata_json =[]
+
+    keys = ['question_id','multivalue']
+    for md in multidata:
+        multidata_json.append({ k: md.__dict__.get(k) for k in keys})
     comments = Comment.objects.filter(survey=survey)
     comments_json = []
  
@@ -196,6 +202,7 @@ def report(request, survey_url):
       comments_json.append({ k: c.__dict__.get(k) for k in keys })
     ctx = { 'survey': survey, 
             'data': json.dumps(data_json), 
+            'multidata': json.dumps(multidata_json),
             'questions': json.dumps(questions_json), 
             'comments': json.dumps(comments_json) }
     return render(request, 'survey/report.html', ctx)
@@ -207,11 +214,15 @@ def render_csv(request, survey_url):
     response['Content-Disposition'] = 'attachment; filename="report-%s.csv"' % survey.name
     writer = csv.writer(response)
     data = Data.objects.filter(survey=survey)
+    multidata = Multidata.objects.filter(survey=survey)
     comments = Comment.objects.filter(survey=survey)
     local_tz = pytz.timezone('US/Pacific')
     for d in data:
         now = d.datetime.replace(tzinfo=pytz.utc).astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
         writer.writerow([now, d.subject_id, d.question, d.question.id, d.value])
+    for md in multidata:
+        now = md.datetime.replace(tzinfo=pytz.utc).astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
+        writer.writerow([now, md.subject_id, md.question, md.question_id, md.multivalue])
     for c in comments:
         nfkd_comment = unicodedata.normalize('NFKD', c.comment).encode('ascii', 'ignore')
         now = c.datetime.replace(tzinfo=pytz.utc).astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
