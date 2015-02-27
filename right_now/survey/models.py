@@ -16,6 +16,7 @@ QUESTION_TYPES = (
     ('D', 'Discrete'),
     ('T', 'Text'),
     ('S', 'Special'),
+    ('M', 'Multiple'),
 )
 
 class Question(models.Model):
@@ -142,4 +143,9 @@ class SurveyQuestion(models.Model):
     mandatory = models.BooleanField(default=False)
     order = models.IntegerField(default=1)
  
-
+class Multidata(models.Model):
+    datetime = models.DateTimeField('Datetime of response')
+    survey = models.ForeignKey('Survey')
+    question = models.ForeignKey('Question')
+    subject_id = models.CharField(max_length=50)
+    multivalue = models.CommaSeparatedIntegerField(max_length=11)

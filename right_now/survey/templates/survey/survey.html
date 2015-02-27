@@ -25,6 +25,18 @@
         </div>
       </div>
     </div>
+  {% elif q.question.qtype == "M" %}
+    <div class='multichoice-container' id="question-{{ q.question.id }}-container">
+      <div class 'multiple' id="question-{{ q.question.id }}">
+        <div class='checkbox-group'>
+          {% for c in q.question.choices %}
+          <label class='check-box'>
+          <input type='checkbox' data-choice-index={{ forloop.counter0 }} name='choiceofcheck' id='{{ q.question.name }}-{{ forloop.counter0 }}-checkbox'>{{ c }}
+          </label><br/>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
   {% elif q.question.qtype == "T" %}
     <div class='text-input-container' id="question-{{ q.question.id }}-container">
       <textarea id="question-{{ q.question.id }}"class="form-control" rows="3"></textarea>
@@ -104,6 +116,21 @@
             unanswered_questions.push(q);
             complete = false;
           }
+        }else if (q.question.qtype=="M"){
+          var choicearray = [];
+          var checkboxs = q_dom.find('.checkbox-group').children().children('input:checked');
+          checkboxs.each(function(i, obj){
+            var choice_index = $(obj).attr('data-choice-index');
+            var v = q.question.value_map[choice_index];
+            choicearray.push(v);
+          });
+          if(choicearray.length !=0){
+            response.multivalue = choicearray.join(','); 
+            payload.push(response);
+          } else if (q.mandatory){
+            unanswered_questions.push(q);
+            complete = false;
+          }  
         }else if (q.question.qtype=="T"){
           var c = q_dom.val();
           if (c != ""){
