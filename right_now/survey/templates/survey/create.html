@@ -1,14 +1,64 @@
 {% extends "survey/layout.html" %}
 {% block content %}
     <div style="margin-bottom: 10px; margin-top: 10px;">
-        <form action="/survey/create/" method="post" role="form">
+        <form action="" method="post" role="form">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="survey-name">Survey name</label>
-                <input class="form-control" name="survey-name" placeholder="My survey" required autofocus>
+            <table class="table">
+                {{ survey_form.as_table }}
+            </table>
+            <table class="table table-striped" id="sq_table">
+                <thead>
+                    <tr>
+                        <th colspan=6><a target="_blank" href="/survey/questions/">View questions</a></th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th>Question</th>
+                        <th>Mandatory</th>
+                        <th>Order</th>
+                        <th></th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sq_form in survey_question_formset %}
+                        <tr>
+                        {% for element in sq_form %}
+                            <td>
+                                {{ element }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {{ survey_question_formset.management_form }}
+            <div style="float: right; clear: both; border: none;">
+                <button type="button" class="btn btn-default" id="add_row">+ Add row</button>
+                <button type="submit" class="btn btn-success">Submit</button>
             </div>
-            {% include "survey/modules.html" %}
-            <button type="submit" class="btn btn-default">Submit</button>
+            <br style="clear: both;">
         </form>
     </div>
+
+    <script>
+        var row = $('#sq_table').find('tbody > tr:first');
+        var i = 3;
+        var find = 'set-0'
+        var re = new RegExp(find, 'g');
+
+        $('#add_row').click(function(){
+            var total_forms = $('#id_surveyquestion_set-TOTAL_FORMS');
+            var nforms = parseFloat(total_forms.val()) + 1;
+            total_forms.val(nforms);
+
+            var myrow = "<tr>" + row.html().replace(re, 'set-' + i) + "</tr>";
+            console.log(myrow);
+            myrow = $(myrow).wrap('<tr></tr>');
+            console.log(myrow);
+            i += 1
+            $('#sq_table').find('tbody').append(myrow);
+        });
+
+    </script>
 {% endblock %}

@@ -107,3 +107,9 @@
   color: rgba(0,0,0,0.5);
   font-size: 0.84em;
 }
+
+div.unanswered {
+  -moz-box-shadow: 0 0 5px 5px #FFCCCC;
+  -webkit-box-shadow: 0 0 5px 5px #FFCCCC;
+  box-shadow: 0 0 5px 5px #FFCCCC;
+}
