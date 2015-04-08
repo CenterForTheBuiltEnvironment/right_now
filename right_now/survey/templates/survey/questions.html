@@ -1,0 +1,31 @@
+{% extends "survey/layout.html" %}
+{% block content %}
+    <div style="margin-bottom: 10px; margin-top: 10px;">
+        {% for q in questions %}
+        <table class="table table-condensed table-striped table-bordered"
+            style="text-align: left; margin-bottom: 40px;">
+            <tbody>
+                <tr>
+                    <th style="width: 100px;">Name</th><td>{{ q.name }}</td>
+                </tr>
+                <tr>
+                    <th style="width: 100px;">Text</th><td>{{ q.text }}</td>
+                </tr>
+                <tr>
+                    <th style="width: 100px;">Type</th><td>{{ q.qtype }}</td>
+                </tr>
+                <tr>
+                    <th style="width: 100px;">Choices</th><td>{{ q.choices }}</td>
+                </tr>   
+                <tr>
+                    <th style="width: 100px;">Values</th><td>{{ q.value_map }}</td>
+                </tr>   
+            </tbody>
+        </table>
+        {% endfor %}
+    </div>
+
+    <script>
+
+    </script>
+{% endblock %}

@@ -88,7 +88,14 @@
   margin-bottom: 20px;
   clear: both;
 }
-
+.check-box{
+  padding: 5px;
+  font-size: 1.15em;
+  line-height: 0.5em;
+  font-weight: normal;
+  margin: 0 auto;
+  clear: both;
+}
 .text-input-container {
   margin-top: 10px;
   margin-bottom: 20px;
@@ -106,4 +113,10 @@
 .thumbnail .caption {
   color: rgba(0,0,0,0.5);
   font-size: 0.84em;
+}
+
+div.unanswered {
+  -moz-box-shadow: 0 0 5px 5px #FFCCCC;
+  -webkit-box-shadow: 0 0 5px 5px #FFCCCC;
+  box-shadow: 0 0 5px 5px #FFCCCC;
 }
