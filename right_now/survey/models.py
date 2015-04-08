@@ -148,4 +148,8 @@ class Multidata(models.Model):
     survey = models.ForeignKey('Survey')
     question = models.ForeignKey('Question')
     subject_id = models.CharField(max_length=50)
+<<<<<<< HEAD
     multivalue = models.CommaSeparatedIntegerField(max_length=51)
+=======
+    multivalue = models.CommaSeparatedIntegerField(max_length=11)
+>>>>>>> 49fa95fa905e0830e0c0480d869d1e6eb22175be

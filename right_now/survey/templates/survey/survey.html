@@ -27,11 +27,19 @@
     </div>
   {% elif q.question.qtype == "M" %}
     <div class='multichoice-container' id="question-{{ q.question.id }}-container">
+<<<<<<< HEAD
       <div class='multiple' id="question-{{ q.question.id }}">
         <div class='checkbox-group'>
           {% for c in q.question.choices %}
           <label class='check-box'>
           <input type='checkbox' data-choice-index={{ forloop.counter0 }} name='choiceofcheck' id='{{ q.question.name }}-{{ forloop.counter0 }}-checkbox'> {{ c }}
+=======
+      <div class 'multiple' id="question-{{ q.question.id }}">
+        <div class='checkbox-group'>
+          {% for c in q.question.choices %}
+          <label class='check-box'>
+          <input type='checkbox' data-choice-index={{ forloop.counter0 }} name='choiceofcheck' id='{{ q.question.name }}-{{ forloop.counter0 }}-checkbox'>{{ c }}
+>>>>>>> 49fa95fa905e0830e0c0480d869d1e6eb22175be
           </label><br/>
           {% endfor %}
         </div>
@@ -169,10 +177,17 @@
 
     function alert_mandatory(q_list){
       for (var i = 0; i < q_list.length; i++){
+<<<<<<< HEAD
         var q_container = $("#question-" + q_list[i].question.id + "-container");
         q_container.addClass('unanswered');
       }      
       var q = $("#question-" + q_list[0].question.id + "-container");
+=======
+        var q_container = $("#question-" + q_list[i].id + "-container");
+        q_container.addClass('unanswered');
+      }      
+      var q = $("#question-" + q_list[0].id + "-container");
+>>>>>>> 49fa95fa905e0830e0c0480d869d1e6eb22175be
       $('html,body').animate({
         scrollTop: q.offset().top - 50
         }, 500);
