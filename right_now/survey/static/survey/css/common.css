@@ -54,14 +54,14 @@
 
 .mylabel {
   color: rgba(0,0,0,0.4);
-  width: 58px;
-  max-width: 58px;
+  width: 458px;
+  max-width: 458px;
   float: left;
   font-size: 0.84em;
 }
 
 .p-label {
-  max-width: 58px;
+  max-width: 458px;
   clear: both;
 }
 
@@ -119,4 +119,30 @@ div.unanswered {
   -moz-box-shadow: 0 0 5px 5px #FFCCCC;
   -webkit-box-shadow: 0 0 5px 5px #FFCCCC;
   box-shadow: 0 0 5px 5px #FFCCCC;
+}
+
+#YourDiv{
+  position: absolute;
+  height: 13px;
+  width: 10%;
+  background: white;
+  border-radius: 0 4px 4px 0;
+  margin-top: -110px;
+  margin-left: 10px;
+}
+
+input.placeholder {
+  text-align: center;
+}
+::-webkit-input-placeholder {
+  text-align: center;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  text-align: center;
+}
+:-ms-input-placeholder {
+  text-align: center;
+}
+:-moz-placeholder {
+  text-align: center;
 }

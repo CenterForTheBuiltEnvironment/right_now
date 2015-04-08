@@ -8,7 +8,7 @@
   {% if q.question.qtype == "C" %}
     <div class='slider-container' id="question-{{ q.question.id }}-container">
       <input type="text" id="question-{{ q.question.id }}" 
-        class="slider" data-slider-min="0" data-slider-max="100"> 
+        class="slider" data-slider-min="0" data-slider-max="100" data-slider-orientation="vertical"> 
     </div>
   {% elif q.question.qtype == "D" %}
     <div id="question-{{ q.question.id }}-container">
@@ -69,8 +69,18 @@
       'tooltip': 'hide',
       'selection': 'none',
       'step': 0.01, 
-      'value': 50,
+      'value': 25,
     });
+
+    $('.slider').on("slide", function(slideEvt){
+       if(slideEvt.value>=45 && slideEvt.value<50){
+        $(this).slider("setValue", 44);
+       }
+       if(slideEvt.value>=50 && slideEvt.value<=55){
+        $(this).slider("setValue", 56);
+       }       
+    });  
+    $('.slider-container').append('<div id="YourDiv" style="width: 50%;"></div>');
 
     $('.slider-handle.round')
       .css('background-image', 'linear-gradient(to bottom, #c0c0c0, #555555)');
@@ -179,7 +189,7 @@
       return;
     }
 
-    function drawTicks(){
+/*    function drawTicks(){
       var N = questions.length;
       var L = 350;
       var tick_width = 1;
@@ -216,6 +226,57 @@
           }
           $('<div class="mylabel"><p class="p-label">' + q.question.choices[j] + '</p></div>')
             .appendTo(labels_container);
+          $('.label').css('width', label_width);
+        }
+      }
+    }   */  
+    function drawTicks(){
+      var N = questions.length;
+      var L = 350;
+      var tick_width = 1;
+      for (var i = 0; i < N; i++){
+        var q = questions[i];
+        if (q.question.qtype=="C"){
+          var M = q.question.choices.length;
+          var container = $('#question-' + q.question.id + '-container');
+          var ticks_container = $("<div class='ticks-container' id='ticks-" 
+            + q.question.id + "-container'></div>").appendTo(container);
+          var labels_container = $("<div class='labels-container' id='labels-" 
+            + q.question.id + "-container'></div>").appendTo(container);
+          var tick_margin = parseInt(L / (M - 1) - tick_width);
+          var remainder = L - (parseInt(tick_margin) + tick_width) * (q.question.choices.length - 1);
+          var label_width = 458;
+          var label_margin = (408 - label_width * M) / (M - 1);
+
+         // ticks
+          $('<div class="tick-slider"></div>').appendTo(ticks_container).css(
+            'margin-top', -217,
+            'margin-left', 'auto',
+            'margin-right', 'auto'
+            );
+          $('<div class="tick-slider"></div>').appendTo(ticks_container).css(
+            'margin-top', -119,   //-134
+            'margin-left', 250,
+            'margin-right', 'auto'
+            );
+          $('<div class="tick-slider"></div>').appendTo(ticks_container).css(
+            'margin-top', -103);   //-111
+          $('<div class="tick-slider"></div>').appendTo(ticks_container).css(
+            'margin-top', -9);     //-7
+          // labels
+
+          $('<div class="mylabel"><p class="p-label">' + q.question.choices[3] + '</p></div>')
+            .appendTo(labels_container)
+            .css('margin-top', -224,
+                 'margin-left', 400);
+          $('<div class="mylabel"><p class="p-label">' + q.question.choices[2] + '</p></div>')
+            .appendTo(labels_container)
+            .css('margin-top', -128);  //-144
+          $('<div class="mylabel"><p class="p-label">' + q.question.choices[1] + '</p></div>')
+            .appendTo(labels_container)
+            .css('margin-top', -111);  //-111
+          $('<div class="mylabel"><p class="p-label">' + q.question.choices[0] + '</p></div>').appendTo(labels_container)
+            .css('margin-top', -15);  //
           $('.label').css('width', label_width);
         }
       }
