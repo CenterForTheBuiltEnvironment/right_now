@@ -10,6 +10,7 @@
   $(document).ready(function(){
     var questions = eval("{{ questions|escapejs }}");
     var data = eval("{{ data|escapejs }}");
+    var multidata = eval("{{ multidata|escapejs }}");
     var comments = eval("{{ comments|escapejs }}");
     var list = $('#report-qlist');
 
@@ -28,6 +29,8 @@
         renderContinuousReport(q);
       } else if (q.qtype == "T"){
         renderComments(q);
+      }else if (q.qtype == "M"){
+        renderMultipleReport(q);
       }
     }
 
@@ -163,7 +166,8 @@
       var h = 220;
       var ri = 70;
       var ro = 220;
-      color = d3.scale.category20c();
+      color = d3.scale.ordinal().range(["#3182bd", "#6baed6", "#9ecae1", "#87CEEB", "#B0E0E6", "#c6dbef", "#AFEEEE", "#48D1CC", "#4169E1", "#87CEFA", "#ADD8E6", "#6495ED", "#00CED1"]);
+//      color = d3.scale.category20c();
  
       var vis = d3.select('#report-' + q.id + '-container')
         .append("svg")
@@ -211,6 +215,98 @@
       });
       table.append('<tr><td style="font-weight:bold;">Total</td><td></td><td style="font-weight:bold;">' + N + '</td></tr></tbody>');
     }
+    function renderMultipleReport(q){
+      var div = $("<div class='question-report-container' id='report-" + q.id + "-container'></div>").appendTo(list);
+      div.append("<li><p class='question-text'>" + q.text + "</p></li>");
+
+      var qldata = _.filter(multidata, function(d){ return d.question_id == q.id; });
+      var N = 0;
+      var qdata= [];
+      var qobject = {};
+      _.each(qldata, function(i){      
+        var choicesarray = i.multivalue.split(",").map(function(x){return parseInt(x)});
+        N += choicesarray.length;
+        for (index = 0; index < choicesarray.length; index++) {
+        qobject = {value: choicesarray[index], question_id: q.id};
+        qdata = qdata.concat(qobject); 
+        }
+      });
+      var counts = _.countBy(qdata, function(d){ return d.value; });
+      var chart_data = _.map(_.zip(q.choices, q.value_map), function(c){
+        var rv = {};
+        rv.label = c[0];
+        rv.count = counts[c[1]];
+        if (rv.count === undefined){
+          rv.count = 0;
+          rv.percentage = 0;
+        } else {
+          rv.percentage = 100 * rv.count / N;
+        }
+        return rv;
+      });
+///  histogram
+
+      var margin = {top: 10, right: 30, bottom: 230, left: 30},
+          width = 600 - margin.left - margin.right,
+          height = 480 - margin.top - margin.bottom;
+      
+      var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+      var y = d3.scale.linear().range([height, 0]);
+
+      var xAxis = d3.svg.axis()
+                  .scale(x)
+                  .orient("bottom");
+      var yAxis = d3.svg.axis()
+                  .scale(y)
+                  .orient("left")
+                  .ticks (10);
+
+      var svg = d3.select("#report-" + q.id + "-container").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+           .append("g")
+               .attr("transform", 
+                     "translate(" + margin.left + "," + margin.top + ")");
+      x.domain(chart_data.map(function(d){return d.label}));
+      y.domain([0, d3.max(chart_data, function(d) { return d.count; })]);
+      
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis)
+        .selectAll("text")
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", "-.55em")
+          .attr("transform", "rotate(-90)" );
+
+      svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+        .append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text("Num of Votes"); 
+      
+      svg.selectAll("bar")
+         .data(chart_data)
+        .enter().append("rect")
+         .style("fill", "steelblue")
+         .attr("x", function(d){return x(d.label);})
+         .attr("width", x.rangeBand())
+         .attr("y", function(d){return y(d.count);})
+         .attr("height", function(d){return height - y(d.count); });
+
+      var table = $('<table class="table table-striped results-table"></table>').appendTo(div);
+      table.append('<thead><tr><th>Category</th><th>%</th><th>Count</th></tr></thead>');
+      table.append('<tbody>');
+      _.each(chart_data, function(d){
+        table.append('<tr><td>' + d.label + '</td><td>' + d.percentage.toFixed(1) + '</td><td>' + d.count + '</td></tr>');
+      });
+      table.append('<tr><td style="font-weight:bold;">Total</td><td></td><td style="font-weight:bold;">' + N + '</td></tr></tbody>');
+    }   
   });
 
 </script>

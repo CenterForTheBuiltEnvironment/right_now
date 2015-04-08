@@ -88,7 +88,14 @@
   margin-bottom: 20px;
   clear: both;
 }
-
+.check-box{
+  padding: 5px;
+  font-size: 1.15em;
+  line-height: 0.5em;
+  font-weight: normal;
+  margin: 0 auto;
+  clear: both;
+}
 .text-input-container {
   margin-top: 10px;
   margin-bottom: 20px;
