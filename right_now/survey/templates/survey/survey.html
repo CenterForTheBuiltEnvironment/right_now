@@ -37,6 +37,11 @@
         </div>
       </div>
     </div>
+  {% elif q.question.qtype == "V" %}
+    <div class='validate-input-container' id="question-{{ q.question.id }}-container">
+      <p class="remindtext" id = "remindtext-question-{{q.question.id}}" style="color:red">Please input a value within the range</p>
+      <input id="question-{{ q.question.id }}" type = "number" step = "any" max = "{{q.question.value_map}}" class="input-validate" rows="1">
+    </div>  
   {% elif q.question.qtype == "T" %}
     <div class='text-input-container' id="question-{{ q.question.id }}-container">
       <textarea id="question-{{ q.question.id }}"class="form-control" rows="3"></textarea>
@@ -92,12 +97,25 @@
     });
 
     $('#submit').click(renderResult);
+    $('.remindtext').hide();
+    $('.input-validate').focusout(function(){
+      var validinput = JSON.parse($(this).context.max);
+      var rid = $(this)[0].id;
+      if($(this).val()>=validinput[0]&&$(this).val()<=validinput[1]){
+        $('#remindtext-'+rid).hide();
+      }else{
+        $('#remindtext-'+rid).show();
+        console.log("input out of range");
+      }
+    });
 
     function renderResult(){
       var N = questions.length;
       var payload = [];
       var unanswered_questions = [];
       var complete = true;
+      var validation = true;
+      var nonvalidated_questions = [];
       for (var i = 0; i < N; i++){
         var q = questions[i];
         var q_dom = $('#question-' + q.question.id);
@@ -114,6 +132,22 @@
             unanswered_questions.push(q);
             complete = false;
           } 
+        } else if (q.question.qtype=='V'){
+          var c = q_dom.val();
+          var minv = q.question.value_map[0];
+          var maxv = q.question.value_map[1];
+          if (c != ""){
+            if (c<=maxv && c>=minv){
+            response.value = c;
+            payload.push(response);
+            }else{
+            nonvalidated_questions.push(q);
+            validation = false;  
+            } 
+          }else if (q.mandatory) {
+            unanswered_questions.push(q);
+            complete = false;
+          }
         } else if (q.question.qtype=="C"){
           var clicked = q_dom.closest('div.slider').data('clicked');
           if (clicked){
@@ -162,7 +196,7 @@
           }
         }
       } 
-      if (complete){
+      if (complete && validation){
         $.ajax({
           url: "/survey/" + survey_url + "/submit/",
           type: "POST",
@@ -171,12 +205,27 @@
             window.location.href = "/survey/" + survey_url + "/thanks/";
           },
         });
-      } else {
+      } else if(validation!=true){
+        $('div').removeClass('nonvalidated');
+        alert_validation(nonvalidated_questions);
+      } else{
         $('div').removeClass('unanswered');
         alert_mandatory(unanswered_questions);
       }
     }
 
+    function alert_validation(q_list){
+      for (var i = 0; i < q_list.length; i++ ){
+        var q_container = $("#question-"+q_list[i].question.id + "-container");
+        q_container.addClass('nonvalidated');
+      }
+      var q = $("#question-" + q_list[0].question.id + "-container");
+     $("#question-" + q_list[0].question.id).focus();
+      $('html,body').animate({
+        scrollTop: q.offset().top - 50
+        }, 500);
+      return;
+    } 
     function alert_mandatory(q_list){
       for (var i = 0; i < q_list.length; i++){
         var q_container = $("#question-" + q_list[i].question.id + "-container");
@@ -255,28 +304,28 @@
             'margin-right', 'auto'
             );
           $('<div class="tick-slider"></div>').appendTo(ticks_container).css(
-            'margin-top', -119,   //-134
+            'margin-top', -119,   
             'margin-left', 250,
             'margin-right', 'auto'
             );
           $('<div class="tick-slider"></div>').appendTo(ticks_container).css(
-            'margin-top', -103);   //-111
+            'margin-top', -103);   
           $('<div class="tick-slider"></div>').appendTo(ticks_container).css(
-            'margin-top', -9);     //-7
-          // labels
+            'margin-top', -9);     
 
+          // labels
           $('<div class="mylabel"><p class="p-label">' + q.question.choices[3] + '</p></div>')
             .appendTo(labels_container)
             .css('margin-top', -224,
                  'margin-left', 400);
           $('<div class="mylabel"><p class="p-label">' + q.question.choices[2] + '</p></div>')
             .appendTo(labels_container)
-            .css('margin-top', -128);  //-144
+            .css('margin-top', -128);  
           $('<div class="mylabel"><p class="p-label">' + q.question.choices[1] + '</p></div>')
             .appendTo(labels_container)
-            .css('margin-top', -111);  //-111
+            .css('margin-top', -111); 
           $('<div class="mylabel"><p class="p-label">' + q.question.choices[0] + '</p></div>').appendTo(labels_container)
-            .css('margin-top', -15);  //
+            .css('margin-top', -15);  
           $('.label').css('width', label_width);
         }
       }

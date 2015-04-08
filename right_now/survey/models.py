@@ -17,6 +17,7 @@ QUESTION_TYPES = (
     ('T', 'Text'),
     ('S', 'Special'),
     ('M', 'Multiple'),
+    ('V', 'Validation'),
 )
 
 class Question(models.Model):
