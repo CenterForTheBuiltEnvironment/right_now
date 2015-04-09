@@ -12,11 +12,12 @@ def get_survey_url():
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
 
 QUESTION_TYPES = (
-    ('C', 'Continuous'),
-    ('D', 'Discrete'),
-    ('T', 'Text'),
-    ('M', 'Multiple'),
-    ('S', 'Special'),
+    ('C', 'Continuous'),    # continuous slider
+    ('A', 'Acceptability'), # broken slider
+    ('D', 'Discrete'),      # radio buttons
+    ('M', 'Multiple'),      # checkboxes
+    ('T', 'Text'),          # text box
+    ('S', 'Special'),       # other: clothing selector
 )
 
 class Question(models.Model):
@@ -120,7 +121,7 @@ class SurveyForm(ModelForm):
             'thank_you_text': Textarea(attrs={'cols': 80, 'rows': 5}),
         }
         help_texts = {
-            'name': ('Some useful help text.'),
+            'name': ('Enter a short name for your survey (required).'),
         }
 
 class Data(models.Model):
