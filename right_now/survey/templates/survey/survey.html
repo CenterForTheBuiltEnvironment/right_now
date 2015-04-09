@@ -10,6 +10,11 @@
       <input type="text" id="question-{{ q.question.id }}" 
         class="slider" data-slider-min="0" data-slider-max="100"> 
     </div>
+  {% elif q.question.qtype == "A" %}
+    <div class='slider-container' id="question-{{ q.question.id }}-container">
+      <input type="text" id="question-{{ q.question.id }}" 
+        class="slider vertical" data-slider-min="0" data-slider-max="100" data-slider-orientation="vertical"> 
+    </div>
   {% elif q.question.qtype == "D" %}
     <div id="question-{{ q.question.id }}-container">
       <div class='discrete' id="question-{{ q.question.id }}">
@@ -81,6 +86,17 @@
         .css('background-image', 'linear-gradient(to bottom, #149bdf, #0480be)');
     });
 
+    $('.slider.vertical').on("slide", function(slideEvt){
+       if(slideEvt.value>=45 && slideEvt.value<50){
+        $(this).slider("setValue", 44);
+       }
+       if(slideEvt.value>=50 && slideEvt.value<=55){
+        $(this).slider("setValue", 56);
+       }
+    });
+
+    // $('.slider-container').append('<div class="slider-mask" style="width: 50%;"></div>');
+
     $('#submit').click(renderResult);
 
     function renderResult(){
@@ -104,12 +120,20 @@
             unanswered_questions.push(q);
             complete = false;
           } 
-        } else if (q.question.qtype=="C"){
+        } else if (q.question.qtype=="C" || q.question.qtype=="A"){
           var clicked = q_dom.closest('div.slider').data('clicked');
           if (clicked){
             var v = q_dom.data('slider').getValue()
             var range = q.question.value_map[1] - q.question.value_map[0];
-            v = v * range / 100 + q.question.value_map[0];
+            if (q.question.qtype=="C"){
+              v = v * range / 100 + q.question.value_map[0];
+            } else if (q.question.qtype=="A"){
+              if (v < 45) { 
+                v = v * range / 45 + q.question.value_map[0];
+              } else if (v > 55) {
+                v = (50 + (v - 55) / 45) * range + q.question.value_map[0];
+              }
+            }
             response.value = v;
             payload.push(response);
           } else if (q.mandatory) {
@@ -179,7 +203,8 @@
       return;
     }
 
-    function drawTicks(){
+    // draw ticks
+    (function(){
       var N = questions.length;
       var L = 350;
       var tick_width = 1;
@@ -217,10 +242,51 @@
           $('<div class="mylabel"><p class="p-label">' + q.question.choices[j] + '</p></div>')
             .appendTo(labels_container);
           $('.label').css('width', label_width);
+        } else if (q.question.qtype=="A"){
+          var M = q.question.choices.length;
+          var container = $('#question-' + q.question.id + '-container');
+          var ticks_container = $("<div class='ticks-container' id='ticks-" 
+            + q.question.id + "-container'></div>").appendTo(container);
+          var labels_container = $("<div class='labels-container' id='labels-" 
+            + q.question.id + "-container'></div>").appendTo(container);
+          var tick_margin = parseInt(L / (M - 1) - tick_width);
+          var remainder = L - (parseInt(tick_margin) + tick_width) * (q.question.choices.length - 1);
+          var label_width = 458;
+          var label_margin = (408 - label_width * M) / (M - 1);
+
+         // ticks
+          $('<div class="tick vertical"></div>').appendTo(ticks_container).css(
+            'margin-top', -217,
+            'margin-left', 'auto',
+            'margin-right', 'auto'
+            );
+          $('<div class="tick vertical"></div>').appendTo(ticks_container).css(
+            'margin-top', -119,   //-134
+            'margin-left', 250,
+            'margin-right', 'auto'
+            );
+          $('<div class="tick vertical"></div>').appendTo(ticks_container).css(
+            'margin-top', -103);   //-111
+          $('<div class="tick vertical"></div>').appendTo(ticks_container).css(
+            'margin-top', -9);     //-7
+          // labels
+
+          $('<div class="mylabel vertical"><p class="p-label vertical">' + q.question.choices[3] + '</p></div>')
+            .appendTo(labels_container)
+            .css('margin-top', -224,
+                 'margin-left', 400);
+          $('<div class="mylabel vertical"><p class="p-label vertical">' + q.question.choices[2] + '</p></div>')
+            .appendTo(labels_container)
+            .css('margin-top', -128);  //-144
+          $('<div class="mylabel vertical"><p class="p-label vertical">' + q.question.choices[1] + '</p></div>')
+            .appendTo(labels_container)
+            .css('margin-top', -111);  //-111
+          $('<div class="mylabel vertical"><p class="p-label vertical">' + q.question.choices[0] + '</p></div>').appendTo(labels_container)
+            .css('margin-top', -15);  //
+          $('.label').css('width', label_width);
         }
       }
-    }
-    drawTicks();
+    }());
 
   });  
 
