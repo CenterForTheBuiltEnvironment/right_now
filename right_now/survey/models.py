@@ -15,6 +15,7 @@ QUESTION_TYPES = (
     ('C', 'Continuous'),
     ('D', 'Discrete'),
     ('T', 'Text'),
+    ('M', 'Multiple'),
     ('S', 'Special'),
 )
 
