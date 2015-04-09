@@ -255,34 +255,24 @@
           var label_margin = (408 - label_width * M) / (M - 1);
 
          // ticks
-          $('<div class="tick vertical"></div>').appendTo(ticks_container).css(
-            'margin-top', -217,
-            'margin-left', 'auto',
-            'margin-right', 'auto'
-            );
-          $('<div class="tick vertical"></div>').appendTo(ticks_container).css(
-            'margin-top', -119,   //-134
-            'margin-left', 250,
-            'margin-right', 'auto'
-            );
-          $('<div class="tick vertical"></div>').appendTo(ticks_container).css(
-            'margin-top', -103);   //-111
-          $('<div class="tick vertical"></div>').appendTo(ticks_container).css(
-            'margin-top', -9);     //-7
-          // labels
+          $('<div class="tick vertical"></div>').appendTo(ticks_container).css('margin-top', -217);
+          $('<div class="tick vertical"></div>').appendTo(ticks_container).css('margin-top', -119);
+          $('<div class="tick vertical"></div>').appendTo(ticks_container).css('margin-top', -103);
+          $('<div class="tick vertical"></div>').appendTo(ticks_container).css('margin-top', -9);
 
+          // labels
           $('<div class="mylabel vertical"><p class="p-label vertical">' + q.question.choices[3] + '</p></div>')
             .appendTo(labels_container)
-            .css('margin-top', -224,
-                 'margin-left', 400);
+            .css('margin-top', -224)
           $('<div class="mylabel vertical"><p class="p-label vertical">' + q.question.choices[2] + '</p></div>')
             .appendTo(labels_container)
-            .css('margin-top', -128);  //-144
+            .css('margin-top', -126);
           $('<div class="mylabel vertical"><p class="p-label vertical">' + q.question.choices[1] + '</p></div>')
             .appendTo(labels_container)
-            .css('margin-top', -111);  //-111
+            .css('margin-top', -111);
           $('<div class="mylabel vertical"><p class="p-label vertical">' + q.question.choices[0] + '</p></div>').appendTo(labels_container)
-            .css('margin-top', -15);  //
+            .css('margin-top', -16);
+
           $('.label').css('width', label_width);
         }
       }
