@@ -94,6 +94,19 @@
   margin: 0 auto;
 }
 
+.slider-horizontal .slider-track {
+  background-image: linear-gradient(to bottom, #dddddd, #eeeeee);
+}
+
+.slider-vertical .slider-track {
+  background-image: linear-gradient(to bottom, #dddddd, #eeeeee);
+}
+
+.slider-vertical .slider-track {
+  background-image: linear-gradient(to bottom, #dddddd, #eeeeee);
+}
+
+
 .clothing {
   padding: 5px;
   text-align: center;

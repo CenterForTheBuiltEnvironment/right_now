@@ -128,10 +128,11 @@
             if (q.question.qtype=="C"){
               v = v * range / 100 + q.question.value_map[0];
             } else if (q.question.qtype=="A"){
+              v = 100 - v; // bottom is the minimum value, top is the max
               if (v < 45) { 
-                v = v * range / 45 + q.question.value_map[0];
+                v = v * range / 90 + q.question.value_map[0];
               } else if (v > 55) {
-                v = (50 + (v - 55) / 45) * range + q.question.value_map[0];
+                v = (v - 10) * range / 90 + q.question.value_map[0];
               }
             }
             response.value = v;
