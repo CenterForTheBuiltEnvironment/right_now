@@ -25,7 +25,7 @@
     function renderChart(q){
       if (q.qtype == "D"){
         renderDiscreteReport(q);
-      } else if (q.qtype == "C"){
+      } else if (q.qtype == "C" || q.qtype == "A"){
         renderContinuousReport(q);
       } else if (q.qtype == "T"){
         renderComments(q);
