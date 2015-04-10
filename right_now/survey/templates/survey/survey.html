@@ -80,7 +80,7 @@
     $('.slider-handle.round')
       .css('background-image', 'linear-gradient(to bottom, #c0c0c0, #555555)');
 
-    $('div.slider').click(function(){
+    $('div.slider').mousedown(function(){
       $(this).data('clicked', true);
       $(this).find('.slider-handle.round')
         .css('background-image', 'linear-gradient(to bottom, #149bdf, #0480be)');
