@@ -43,51 +43,14 @@
                         </a>
                     </td>
                     <td class="center-align">
-                        <a class="edit-survey" href="#">
-                            <span data-survey-name="{{ survey.name }}" 
-                                data-survey-id="{{ survey.id }}" 
-                                data-survey-active="{{ survey.active }}" 
-                                class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                        <a class="edit-survey" href="/survey/create/{{ survey.id }}/">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                         </a>
                     </td>
-
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <div class="modal fade" id="survey-edit-modal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="my-modal-title"></h4>
-                </div>
-                <div class="modal-body">
-                    <div style="margin-bottom: 10px;">
-                        <label for="survey-name">Survey name</label>
-                        <input class="form-control" id="survey-name" autofocus>
-                    </div>
-                    <div class="btn-group" data-toggle="buttons" style="margin-bottom: 10px;">
-                        <label id="active" class="btn btn-default">
-                            <input type="radio" name="options" autocomplete="off">Active
-                        </label>
-                        <label id="inactive" class="btn btn-default">
-                            <input type="radio" name="options" autocomplete="off">Inactive
-                        </label>
-                    </div>
-                    {% comment %}
-                        changing modules not implemented
-                        {% include "survey/modules.html" %}
-                    {% endcomment %}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="survey-edit-save" type="button" class="btn btn-primary">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
 {% else %}
     <p>No surveys yet.</p>
@@ -99,39 +62,8 @@
 
 <script>
 
-    $('#create-survey').click(function(){
+    $('#create-survey').click(function(event){
         window.location.href = '/survey/create/';
-    });
-
-    $('.edit-survey').click(function(){
-        var survey_id = $(event.target).data('survey-id');
-        var survey_name = $(event.target).data('survey-name');
-        var survey_active = ($(event.target).data('survey-active').toLowerCase() === "true");
-        $('#survey-edit-modal').modal({'show': true});
-        $('#my-modal-title').html('Editing ' + survey_name);
-
-        $("#survey-name").val(survey_name);
-        if (survey_active){
-            $('#active').addClass('active');
-            $('#inactive').removeClass('active');
-        } else {
-            $('#active').removeClass('active');
-            $('#inactive').addClass('active');
-        }
-
-        $('#survey-edit-save').click(function(){
-            var name = $('#survey-name').val();
-            var active = $('#active').hasClass('active')
-            var postdata = {'name': name, 'active': active, 'id': survey_id};
-             
-            $.ajax('/survey/edit/', {
-                'data': JSON.stringify(postdata),
-                'type': 'POST',
-                'success': function(){
-                    window.location.href = '/survey/'; 
-                }
-            });
-        });
     });
 
 </script>

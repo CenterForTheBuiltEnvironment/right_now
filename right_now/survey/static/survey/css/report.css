@@ -6,7 +6,20 @@ svg {
   margin-bottom: 20px;
   margin-top: 20px;
 }
-
+.textlabel{
+  margin-bottom: 20px;
+  margin-top: 20px;
+  /* Safari */
+-webkit-transform: rotate(-90deg);
+/* Firefox */
+-moz-transform: rotate(-90deg);
+/* IE */
+-ms-transform: rotate(-90deg);
+/* Opera */
+-o-transform: rotate(-90deg);
+/* Internet Explorer */
+filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
 .results-table {
   text-align: left;
   width: 500px;
