@@ -247,11 +247,7 @@
         return rv;
       });
 ///  histogram
-/*
-      var margin = {top: 10, right: 30, bottom: 230, left: 30},
-          width = 600 - margin.left - margin.right,
-          height = 480 - margin.top - margin.bottom;
-          */
+
       var maxLength = 0;
       _.each(chart_data, function(i){
         maxLength = Math.max(maxLength, i.label.length);   
@@ -262,7 +258,6 @@
       var margin = {top: 10, right: 30, bottom: 60+maxLength, left: 30},
           width = 600 - margin.left - margin.right,
           height = 300 + maxLength- margin.top - margin.bottom;
-
       var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
       var y = d3.scale.linear().range([height, 0]);
 
@@ -302,7 +297,7 @@
           .attr("dy", ".71em")
           .style("text-anchor", "end")
           .text("Num of Votes"); 
-    
+
       svg.selectAll("bar")
          .data(chart_data)
         .enter().append("rect")
@@ -313,7 +308,6 @@
          .attr("height", function(d){return height - y(d.count); });
 
  //     var textlabel = $('<div class="textlabel" style="margin-top:auto">' + maxstr + '</div>').appendTo(div);
-
       var table = $('<table class="table table-striped results-table"></table>').appendTo(div);
       table.append('<thead><tr><th>Category</th><th>%</th><th>Count</th></tr></thead>');
       table.append('<tbody>');
