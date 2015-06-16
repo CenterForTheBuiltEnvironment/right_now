@@ -16,6 +16,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.forms.models import modelform_factory, inlineformset_factory
+from django.db.models import Q
 
 from survey.models import Survey, SurveyQuestion, Question, Data, Multidata, \
  Comment, Module, get_survey_url, SurveyForm, QuestionForm, SurveyQuestionForm
@@ -85,10 +86,18 @@ def welcome(request, survey_url):
     }
     return render(request, 'survey/welcome.html', ctx)
 
+def user_question_form(user):
+    class UserQuestionForm(SurveyQuestionForm):
+        def __init__(self, **kwargs):
+            super(SurveyQuestionForm, self).__init__(**kwargs)
+            self.fields['question'].queryset = Question.objects.filter(Q(user=user) | Q(user=None))
+
+    return UserQuestionForm
+
 @login_required
 def manage_survey(request, survey_id=None):
-    my_survey_question_form = SurveyQuestionForm(user=request.user.id)
-    SurveyQuestionFormset = inlineformset_factory(Survey, SurveyQuestion, form=my_survey_question_form)
+    UserQuestionForm = user_question_form(request.user.id)
+    SurveyQuestionFormset = inlineformset_factory(Survey, SurveyQuestion, form=UserQuestionForm)
     if survey_id is not None:
         survey = get_object_or_404(Survey, id__exact=int(survey_id))
         if survey.user != request.user:
