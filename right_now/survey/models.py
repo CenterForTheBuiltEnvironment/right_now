@@ -26,6 +26,7 @@ class Question(models.Model):
     qtype = models.CharField(max_length=1, choices=QUESTION_TYPES) 
     choices = JSONField(blank=True)
     value_map = JSONField(blank=True)
+    user = models.ForeignKey(User, default=None, null=True)
 
     def __unicode__(self):
         return self.name
@@ -39,7 +40,6 @@ class Module(models.Model):
         return self.name
 
 class Survey(models.Model):
-
     date_created = models.DateTimeField('Date created', auto_now_add=True)
     name = models.CharField(max_length=80)
     url = models.CharField(max_length=5, default=get_survey_url)
@@ -123,6 +123,11 @@ class SurveyForm(ModelForm):
         help_texts = {
             'name': ('Enter a short name for your survey (required).'),
         }
+
+class QuestionForm(ModelForm):
+    class Meta:
+        model = Question
+        exclude = ['user']
 
 class Data(models.Model):
     datetime = models.DateTimeField('Datetime of response')

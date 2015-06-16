@@ -18,7 +18,7 @@ from django.contrib.auth.models import User
 from django.forms.models import modelform_factory, inlineformset_factory
 
 from survey.models import Survey, SurveyQuestion, Question, Data, Multidata, \
- Comment, Module, get_survey_url, SurveyForm
+ Comment, Module, get_survey_url, SurveyForm, QuestionForm
 
 @login_required
 def index(request):
@@ -86,7 +86,7 @@ def welcome(request, survey_url):
     return render(request, 'survey/welcome.html', ctx)
 
 @login_required
-def create(request, survey_id=None):
+def manage_survey(request, survey_id=None):
     SurveyQuestionFormset = inlineformset_factory(Survey, SurveyQuestion)
     if survey_id is not None:
         survey = get_object_or_404(Survey, id__exact=int(survey_id))
@@ -122,7 +122,37 @@ def create(request, survey_id=None):
             'survey_form': survey_form,
             'survey_question_formset': survey_question_formset
         }
-        return render(request, 'survey/create.html', ctx)
+        return render(request, 'survey/manage_survey.html', ctx)
+
+@login_required
+def manage_question(request, question_id=None):
+
+    if question_id is not None:
+        question = get_object_or_404(Question, id__exact=int(question_id))
+        if question.user != request.user:
+            return HttpResponseForbidden()
+    else:
+        question = None
+
+    if request.POST:
+        question_form = QuestionForm(request.POST)
+        question_instance = question_form.save(commit=False)
+        question_instance.user_id = request.user.id
+        question_instance.save()
+
+        if question_id is None:
+            messages.success(request, 'New question successfully created.')
+        else:
+            messages.success(request, 'Question successfully updated.')
+
+        return HttpResponseRedirect('/survey/questions/')
+
+    else:
+        question_form = QuestionForm()
+        ctx = {
+            'question_form': question_form,
+        }
+        return render(request, 'survey/manage_question.html', ctx)
 
 @login_required
 def questions(request):

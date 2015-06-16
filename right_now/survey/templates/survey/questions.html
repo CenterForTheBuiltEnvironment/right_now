@@ -1,5 +1,12 @@
 {% extends "survey/layout.html" %}
 {% block content %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success" role="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
     <div style="margin-bottom: 10px; margin-top: 10px;">
         {% for q in questions %}
         <table class="table table-condensed table-striped table-bordered"

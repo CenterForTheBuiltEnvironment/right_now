@@ -53,9 +53,7 @@
             total_forms.val(nforms);
 
             var myrow = "<tr>" + row.html().replace(re, 'set-' + i) + "</tr>";
-            console.log(myrow);
             myrow = $(myrow).wrap('<tr></tr>');
-            console.log(myrow);
             i += 1
             $('#sq_table').find('tbody').append(myrow);
         });
