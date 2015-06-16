@@ -18,7 +18,7 @@ from django.contrib.auth.models import User
 from django.forms.models import modelform_factory, inlineformset_factory
 
 from survey.models import Survey, SurveyQuestion, Question, Data, Multidata, \
- Comment, Module, get_survey_url, SurveyForm, QuestionForm
+ Comment, Module, get_survey_url, SurveyForm, QuestionForm, SurveyQuestionForm
 
 @login_required
 def index(request):
@@ -87,7 +87,8 @@ def welcome(request, survey_url):
 
 @login_required
 def manage_survey(request, survey_id=None):
-    SurveyQuestionFormset = inlineformset_factory(Survey, SurveyQuestion)
+    my_survey_question_form = SurveyQuestionForm(user=request.user.id)
+    SurveyQuestionFormset = inlineformset_factory(Survey, SurveyQuestion, form=my_survey_question_form)
     if survey_id is not None:
         survey = get_object_or_404(Survey, id__exact=int(survey_id))
         if survey.user != request.user:
@@ -118,6 +119,7 @@ def manage_survey(request, survey_id=None):
     else:
         survey_form = SurveyForm(instance=survey)
         survey_question_formset = SurveyQuestionFormset(instance=survey)
+
         ctx = {
             'survey_form': survey_form,
             'survey_question_formset': survey_question_formset
@@ -156,9 +158,11 @@ def manage_question(request, question_id=None):
 
 @login_required
 def questions(request):
-    questions = Question.objects.all()
+    user_questions = Question.objects.filter(user=int(request.user.id))
+    core_questions = Question.objects.filter(user=None)
     ctx = {
-        'questions': questions,
+        'core_questions': core_questions,
+        'user_questions': user_questions,
     }
     return render(request, 'survey/questions.html', ctx)
 

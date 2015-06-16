@@ -4,6 +4,7 @@ from django.db import models
 from json_field import JSONField
 from django.contrib.auth.models import User
 from django.forms import ModelForm, Textarea
+from django.db.models import Q
 
 import random
 import string
@@ -148,6 +149,17 @@ class SurveyQuestion(models.Model):
     question = models.ForeignKey('Question')
     mandatory = models.BooleanField(default=False)
     order = models.IntegerField(default=1)
+
+class SurveyQuestionForm(ModelForm):
+    class Meta:
+        model = SurveyQuestion
+    
+    def __init__(self, user=None, **kwargs):
+        super(SurveyQuestionForm, self).__init__(**kwargs)
+        if user:
+            my_queryset = Question.objects.filter(Q(user=user) | Q(user=None))
+            self.fields['question'].queryset = my_queryset
+
  
 class Multidata(models.Model):
     datetime = models.DateTimeField('Datetime of response')
