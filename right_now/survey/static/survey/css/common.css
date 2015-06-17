@@ -157,3 +157,19 @@ div.unanswered {
   -webkit-box-shadow: 0 0 5px 5px #FFCCCC;
   box-shadow: 0 0 5px 5px #FFCCCC;
 }
+
+caption {
+  color: #959595;
+  margin-bottom: 10px;
+}
+
+.question-table-container {
+  padding: 15px;
+  position: relative;
+  border-style: solid;
+  background-color: #fff;
+  border-color: #ddd;
+  border-width: 1px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}

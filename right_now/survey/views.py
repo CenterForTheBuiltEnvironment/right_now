@@ -159,7 +159,7 @@ def manage_question(request, question_id=None):
         return HttpResponseRedirect('/survey/questions/')
 
     else:
-        question_form = QuestionForm()
+        question_form = QuestionForm(instance=question)
         ctx = {
             'question_form': question_form,
         }
