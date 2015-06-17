@@ -1,12 +1,12 @@
 {% extends "survey/layout.html" %}
 {% block content %}
-    <div style="margin-bottom: 10px; margin-top: 10px;">
+    <div style="margin-bottom: 70px; margin-top: 10px;">
         <form action="" method="post" role="form">
             {% csrf_token %}
             <table class="table">
                 {{ question_form.as_table }}
             </table>
-            <button type="submit" class="btn btn-success">Submit</button>
+            <button type="submit" style="float: right;" class="btn btn-success">Submit</button>
         </form>
     </div>
 {% endblock %}
