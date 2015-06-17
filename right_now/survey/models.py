@@ -24,8 +24,8 @@ class Question(models.Model):
     name = models.CharField(max_length=80)
     text = models.TextField(blank=True)
     qtype = models.CharField(max_length=1, choices=QUESTION_TYPES) 
-    choices = JSONField(blank=True)
-    value_map = JSONField(blank=True)
+    choices = JSONField(blank=True, default='["choice/label1", "choice/label2", "choice/label3", "choice/label4"]')
+    value_map = JSONField(blank=True, default='[-3, 3]')
     user = models.ForeignKey(User, default=None, null=True)
 
     def __unicode__(self):
@@ -128,6 +128,19 @@ class QuestionForm(ModelForm):
     class Meta:
         model = Question
         exclude = ['user']
+        help_texts = {
+            'name': ('A short name for your question (required).'),
+            'text': ('The text of your question.'),
+            'qtype': ('The type of question.'),
+            'choices': ('For a discrete or multiple choice question, these are the choices ' + \
+                        'available. For a continuous question, these are the labels for the ' + \
+                        'scale. For an acceptability question, you must have exactly four ' + \
+                        'labels. Unused for other types of questions.'),
+            'value_map': ('For a discrete question, enter the number you want each choice ' + \
+                          'above to map to. For a continuous or acceptability question, this ' + \
+                          'represents the range of values that the slider values are mapped to. ' + \
+                          'For other types of questions, this field is unused'),
+        }
 
 class Data(models.Model):
     datetime = models.DateTimeField('Datetime of response')
