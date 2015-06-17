@@ -1,0 +1,44 @@
+{% extends "survey/layout.html" %}
+
+{% block content %}
+    
+    <table class="table table-striped">
+        <tr>
+            <th>Name<th>
+            <td>{{ question.name }}</td>
+        </tr>
+        <tr>
+            <th>Text<th>
+            <td>{{ question.text }}</td>
+        </tr>
+        <tr>
+            <th>Type<th>
+            <td>
+                {% if question.qtype == "A" %} 
+                    Acceptability
+                {% elif question.qtype == "C" %}
+                    Continuous
+                {% elif question.qtype == "D" %}
+                    Discrete
+                {% elif question.qtype == "M" %}
+                    Multiple choice
+                {% elif question.qtype == "S" %}
+                    Special
+                {% elif question.qtype == "T" %}
+                    Text
+                {% else %}
+                    None
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Choices (Labels)<th>
+            <td>{{ question.choices }}</td>
+        </tr>
+        <tr>
+            <th>Value map<th>
+            <td>{{ question.value_map }}</td>
+        </tr>
+    </table>
+
+{% endblock %}

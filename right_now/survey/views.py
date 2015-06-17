@@ -166,6 +166,15 @@ def manage_question(request, question_id=None):
         return render(request, 'survey/manage_question.html', ctx)
 
 @login_required
+def view_question(request, question_id):
+    question = get_object_or_404(Question, id=question_id) 
+    if question.user is None or (question.user==request.user):
+        ctx = {'question': question}
+        return render(request, 'survey/view_question.html', ctx)
+    else:
+        return HttpResponseForbidden()
+    
+@login_required
 def questions(request):
     user_questions = Question.objects.filter(user=int(request.user.id))
     core_questions = Question.objects.filter(user=None)
