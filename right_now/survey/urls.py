@@ -16,6 +16,8 @@ urlpatterns = patterns('',
     url(r'^edit/(?P<survey_id>\d+)/$', views.manage_survey, name='edit_survey'),
 
     url(r'^signup/$', views.signup, name='signup'),
+    url(r'^invites/$', views.manage_invites, name='invites'),
+
     url(r'^(?P<survey_url>([A-Z]|[0-9]){5})\/?$', views.welcome, name='welcome'),
     url(r'^(?P<survey_url>([A-Z]|[0-9]){5})\/survey\/?$', views.survey, name='survey'),
     url(r'^(?P<survey_url>([A-Z]|[0-9]){5})\/session\/?$', views.session, name='session'),

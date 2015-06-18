@@ -172,3 +172,15 @@ class Multidata(models.Model):
     question = models.ForeignKey('Question')
     subject_id = models.CharField(max_length=50)
     multivalue = models.CommaSeparatedIntegerField(max_length=51)
+
+class Invite(models.Model):
+    code = models.CharField(max_length=5, default=get_survey_url) 
+    fresh = models.BooleanField(default=True)
+    used = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return self.code
+
+class InviteForm(ModelForm):
+    class Meta:
+        model = Invite

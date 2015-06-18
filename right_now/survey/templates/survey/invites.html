@@ -1,0 +1,42 @@
+{% extends 'survey/layout.html' %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+    <div style="margin-bottom: 10px; margin-top: 10px;">
+        <form action="" method="post" role="form">
+            {% csrf_token %}
+            <table class="table table-striped" id="invite_table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Fresh?<th>
+                        <th>Used?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invite_form in invite_formset %}
+                        <tr>
+                        {% for element in invite_form %}
+                            <td>
+                                {{ element }}
+                            </td>
+                        {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {{ invite_formset.management_form }}
+            <div style="float: right; clear: both; border: none;">
+                <button type="submit" class="btn btn-success">Submit</button>
+            </div>
+            <br style="clear: both;">
+        </form>
+    </div>
+
+{% endblock %}

@@ -11,15 +11,17 @@ from django.core.context_processors import csrf
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.template import RequestContext, loader
 from django.views.decorators.http import require_POST
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.forms.models import modelform_factory, inlineformset_factory
+from django.forms.models import modelformset_factory, inlineformset_factory
 from django.db.models import Q
 
 from survey.models import Survey, SurveyQuestion, Question, Data, Multidata, \
- Comment, Module, get_survey_url, SurveyForm, QuestionForm, SurveyQuestionForm
+ Comment, Module, get_survey_url, SurveyForm, QuestionForm, SurveyQuestionForm, \
+ Invite, InviteForm
 
 @login_required
 def index(request):
@@ -53,8 +55,9 @@ def signup(request):
         password1 = request.POST['password1']
         password2 = request.POST['password2']
         email = request.POST['email']
+        code = request.POST['code']
 
-        # validate the username, email, and password
+        # validate the username, email, password, and code
 
         if password1!=password2:
             messages.error(request, 'Passwords do not match.')
@@ -67,6 +70,20 @@ def signup(request):
         if User.objects.filter(username=username).exists():
             messages.error(request, 'Username not available.')
             return HttpResponseRedirect('/survey/signup/')
+
+        try:
+            invite = Invite.objects.get(code=code)
+        except Invite.DoesNotExist:
+            messages.error(request, 'Invalid invite code. Try again or contact thoyt at berkeley.edu for an invite.')
+            return HttpResponseRedirect('/survey/signup/')
+
+        if invite.used:
+            messages.error(request, 'Invite code already used. Try again or contact thoyt at berkeley.edu for an invite.')
+            return HttpResponseRedirect('/survey/signup/')
+
+        invite.used = True
+        invite.fresh = False # in case someone forgot to mark it unfresh
+        invite.save()
 
         user = User.objects.create_user(username, email=email, password=password2)
         user = authenticate(username=username, password=password2)
@@ -302,3 +319,26 @@ def render_csv(request, survey_url):
         now = c.datetime.replace(tzinfo=pytz.utc).astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
         writer.writerow([now, c.subject_id, c.question, c.question.id, nfkd_comment])
     return response
+
+@staff_member_required
+def manage_invites(request):
+    # check number of active invites
+    invites = Invite.objects.filter(fresh=True)
+    N = len(invites)
+    if N < 10:
+        # generate enough fresh ones
+        for _ in range(10 - N):
+            invite = Invite()
+            invite.save()
+
+    InviteFormset = modelformset_factory(Invite, form=InviteForm)
+    queryset = Invite.objects.filter(fresh=True)
+    invite_formset = InviteFormset(queryset=queryset)
+    if request.method == 'POST':
+        invite_formset = InviteFormset(request.POST)
+        if invite_formset.is_valid():
+            invite_formset.save()
+            messages.success(request, 'Successfully updated invites.')
+
+    return render(request, 'survey/invites.html', {'invite_formset': invite_formset})    
+
