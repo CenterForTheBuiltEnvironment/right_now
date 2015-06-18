@@ -28,6 +28,9 @@
             <li><a href="/survey/">Surveys</a></li>
             <li><a href="/survey/questions">Questions</a></li>
             <li><a href="/survey/logout">Log out</a></li>
+            {% if user.is_staff %}
+              <li><a href="/survey/invites">Invites</a></li>
+            {% endif %}
           {% else %}
             <li><a href="/survey/login">Log in</a></li>
           {% endif %}
