@@ -184,3 +184,4 @@ class Invite(models.Model):
 class InviteForm(ModelForm):
     class Meta:
         model = Invite
+        exclude = ['used']

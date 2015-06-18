@@ -331,7 +331,7 @@ def manage_invites(request):
             invite = Invite()
             invite.save()
 
-    InviteFormset = modelformset_factory(Invite, form=InviteForm)
+    InviteFormset = modelformset_factory(Invite, form=InviteForm, extra=0)
     queryset = Invite.objects.filter(fresh=True)
     invite_formset = InviteFormset(queryset=queryset)
     if request.method == 'POST':
@@ -340,5 +340,5 @@ def manage_invites(request):
             invite_formset.save()
             messages.success(request, 'Successfully updated invites.')
 
-    return render(request, 'survey/invites.html', {'invite_formset': invite_formset})    
+    return render(request, 'survey/invites.html', {'invite_formset': invite_formset, 'codes': invites})    
 
