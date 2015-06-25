@@ -124,6 +124,9 @@ def manage_survey(request, survey_id=None):
 
     if request.POST:
         survey_form = SurveyForm(request.POST, instance=survey)
+        if not survey_form.is_valid():
+            messages.error(request, 'Please complete required fields.')
+            return HttpResponseRedirect('/survey/create/')
         survey_instance = survey_form.save(commit=False)
         survey_instance.user_id = request.user.id
         survey_instance.save()
@@ -164,6 +167,9 @@ def manage_question(request, question_id=None):
 
     if request.POST:
         question_form = QuestionForm(request.POST)
+        if not question_form.is_valid():
+            messages.error(request, 'Please complete required fields.')
+            return HttpResponseRedirect('/survey/questions/create/')
         question_instance = question_form.save(commit=False)
         question_instance.user_id = request.user.id
         question_instance.save()
