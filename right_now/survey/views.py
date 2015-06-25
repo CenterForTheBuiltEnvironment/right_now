@@ -163,7 +163,7 @@ def manage_question(request, question_id=None):
         question = None
 
     if request.POST:
-        question_form = QuestionForm(request.POST)
+        question_form = QuestionForm(request.POST, instance=question)
         question_instance = question_form.save(commit=False)
         question_instance.user_id = request.user.id
         question_instance.save()
