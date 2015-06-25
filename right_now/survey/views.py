@@ -166,7 +166,7 @@ def manage_question(request, question_id=None):
         question = None
 
     if request.POST:
-        question_form = QuestionForm(request.POST)
+        question_form = QuestionForm(request.POST, instance=question)
         if not question_form.is_valid():
             messages.error(request, 'Please complete required fields.')
             return HttpResponseRedirect('/survey/questions/create/')
