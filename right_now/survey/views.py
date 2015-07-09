@@ -124,6 +124,9 @@ def manage_survey(request, survey_id=None):
 
     if request.POST:
         survey_form = SurveyForm(request.POST, instance=survey)
+        if not survey_form.is_valid():
+            messages.error(request, 'Please complete required fields.')
+            return HttpResponseRedirect('/survey/create/')
         survey_instance = survey_form.save(commit=False)
         survey_instance.user_id = request.user.id
         survey_instance.save()
@@ -163,7 +166,10 @@ def manage_question(request, question_id=None):
         question = None
 
     if request.POST:
-        question_form = QuestionForm(request.POST)
+        question_form = QuestionForm(request.POST, instance=question)
+        if not question_form.is_valid():
+            messages.error(request, 'Please complete required fields.')
+            return HttpResponseRedirect('/survey/questions/create/')
         question_instance = question_form.save(commit=False)
         question_instance.user_id = request.user.id
         question_instance.save()
@@ -322,6 +328,14 @@ def render_csv(request, survey_url):
 
 @staff_member_required
 def manage_invites(request):
+
+    InviteFormset = modelformset_factory(Invite, form=InviteForm, extra=0)
+    if request.method == 'POST':
+        invite_formset = InviteFormset(request.POST)
+        if invite_formset.is_valid():
+            invite_formset.save()
+            messages.success(request, 'Successfully updated invites.')
+
     # check number of active invites
     invites = Invite.objects.filter(fresh=True)
     N = len(invites)
@@ -331,14 +345,7 @@ def manage_invites(request):
             invite = Invite()
             invite.save()
 
-    InviteFormset = modelformset_factory(Invite, form=InviteForm, extra=0)
-    queryset = Invite.objects.filter(fresh=True)
-    invite_formset = InviteFormset(queryset=queryset)
-    if request.method == 'POST':
-        invite_formset = InviteFormset(request.POST)
-        if invite_formset.is_valid():
-            invite_formset.save()
-            messages.success(request, 'Successfully updated invites.')
-
-    return render(request, 'survey/invites.html', {'invite_formset': invite_formset, 'codes': invites})    
+    invites = Invite.objects.filter(fresh=True)
+    invite_formset = InviteFormset(queryset=invites)
+    return render(request, 'survey/invites.html', {'invite_formset': invite_formset, 'codes': invites})
 

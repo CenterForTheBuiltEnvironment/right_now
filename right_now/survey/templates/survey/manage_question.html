@@ -1,6 +1,11 @@
 {% extends "survey/layout.html" %}
 {% block content %}
     <div style="margin-bottom: 70px; margin-top: 10px;">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
         <form action="" method="post" role="form">
             {% csrf_token %}
             <table class="table">
