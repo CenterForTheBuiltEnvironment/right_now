@@ -206,7 +206,7 @@ def serialize_survey_questions(survey_questions):
     questions_json = []
     for q in survey_questions:
         keys = ['id', 'order', 'mandatory', 'question']
-        qkeys = ['id', 'qtype', 'choices', 'text', 'value_map']
+        qkeys = ['id', 'qtype', 'choices', 'text', 'value_map', 'name']
         obj = {k: getattr(q, k) for k in keys}
         obj['question'] = {k: getattr(obj['question'], k) for k in qkeys}
         questions_json.append(obj)

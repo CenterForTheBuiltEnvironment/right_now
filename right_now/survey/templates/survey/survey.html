@@ -165,11 +165,11 @@
             unanswered_questions.push(q);
             complete = false;
           }
-        } else if (q.qtype=="S"){
+        } else if (q.question.qtype=="S"){
           // Special modules
-          if (q.name == "SpecialClothingLevel"){
+          if (q.question.name == "SpecialClothingLevel"){
             response.value = get_clo();
-            if ((response.value == 0.2) & (q.mandatory)) { 
+            if ((response.value == 0.2) && (q.mandatory)) { 
               unanswered_questions.push(q);
               complete = false;
             }
